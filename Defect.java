@@ -1,3 +1,5 @@
+package x46011.teama.dts;
+
 import java.util.Date;
 
 public class Defect {
