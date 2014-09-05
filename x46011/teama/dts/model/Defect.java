@@ -2,6 +2,14 @@ package x46011.teama.dts.model;
 
 import java.util.Date;
 
+/**
+ * The Defect model object
+ * 
+ * @author Travis Cribbet
+ * @author Amit Dhamija
+ * @version 1.0
+ * @revision 1.1	Added spaces
+ */
 public class Defect {
 	private Date date;
 	private int id;
@@ -11,9 +19,8 @@ public class Defect {
 	private Person assignee;
 	private DefectStatusType status;
 	private int priority;
-	public Defect(Date date, int id, Person reporter, String summary
-			, String details, Person assignee, DefectStatusType status
-			, int priority){
+	
+	public Defect(Date date, int id, Person reporter, String summary, String details, Person assignee, DefectStatusType status, int priority) {
 		this.setDate(date);
 		this.setId(id);
 		this.setReporter(reporter);
@@ -23,54 +30,68 @@ public class Defect {
 		this.setStatus(status);
 		this.setPriority(priority);
 	}
+	
 	public Date getDate() {
 		return date;
 	}
+	
 	public void setDate(Date date) {
 		this.date = date;
 	}
+	
 	public int getId() {
 		return id;
 	}
+	
 	public void setId(int id) {
 		this.id = id;
 	}
+	
 	public Person getReporter() {
 		return reporter;
 	}
+	
 	public void setReporter(Person reporter) {
 		this.reporter = reporter;
 	}
+	
 	public String getSummary() {
 		return summary;
 	}
+	
 	public void setSummary(String summary) {
 		this.summary = summary;
 	}
+	
 	public String getDetails() {
 		return details;
 	}
+	
 	public void setDetails(String details) {
 		this.details = details;
 	}
+	
 	public Person getAssignee() {
 		return assignee;
 	}
+	
 	public void setAssignee(Person assignee) {
 		this.assignee = assignee;
 	}
+	
 	public DefectStatusType getStatus() {
 		return status;
 	}
+	
 	public void setStatus(DefectStatusType status) {
 		this.status = status;
 	}
+	
 	public int getPriority() {
 		return priority;
 	}
+	
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
-	
-	
 }

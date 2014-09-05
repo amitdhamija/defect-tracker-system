@@ -56,8 +56,8 @@ public class DefectTrackerSystemManager implements
 	public void createDefect() {
 		disposeScreen();
 		
-		Defect defect = new Defect(currentUser);
-		currentDefect = defect;
+		//Defect defect = new Defect(currentUser);
+		//currentDefect = defect;
 		
 		displayCurrentDefectForEditing();
 	}
@@ -103,13 +103,13 @@ public class DefectTrackerSystemManager implements
 	public void cancel() {
 		IDefectTrackerScreen cancelledScreen = screen;
 		
-		if (cancelledScreen instanceof DefectListScreen)
+		//if (cancelledScreen instanceof DefectListScreen)
 			;// logoutUser();
-		else if (cancelledScreen instanceof DefectEditScreen)
+		//else if (cancelledScreen instanceof DefectEditScreen)
 			;// return to DefectListScreen
-		else if (cancelledScreen instanceof EmailScreen)
+		//else if (cancelledScreen instanceof EmailScreen)
 			;// return to DefectEditScreen
-		else
+		//else
 			;// probably log an error then return to DefectListScreen
 	}
 /***
@@ -126,22 +126,22 @@ public class DefectTrackerSystemManager implements
 	}
 	
 	private Integer saveCurrentDefect() {
-		Integer defectId = dbCommunicator.saveDefect(currentDefect);
-		return defectId;
+		//Integer defectId = dbCommunicator.saveDefect(currentDefect);
+		return null; //defectId;
 	}
 
 	private void displayDefectList() {
-		screen = new DefectListScreen();
+		//screen = new DefectListScreen();
 		screen.display(this);
 	}
 
 	private void displayCurrentDefectForEditing() {
-		screen = new DefectEditScreen( currentDefect );
+		//screen = new DefectEditScreen( currentDefect );
 		screen.display(this);
 	}
 	
 	private void displayEmailScreen() {
-		screen = new EmailScreen( currentDefect );
+		//screen = new EmailScreen( currentDefect );
 		screen.display(this);
 	}
 }
