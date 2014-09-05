@@ -1,4 +1,4 @@
-package x46011.teama.dts;
+package x46011.teama.dts.model;
 
 public class Person {
 	private String Name;

@@ -1,7 +1,7 @@
-package x46011.teama.dts.dbComm;
+package x46011.teama.dts.db;
 
 import java.util.ArrayList;
-import x46011.teama.dts.defect.Defect;
+import x46011.teama.dts.model.Defect;
 
 
 public interface IDatabaseCommunications {

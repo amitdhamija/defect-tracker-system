@@ -1,4 +1,4 @@
-package x46011.teama.dts;
+package x46011.teama.dts.controller;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;

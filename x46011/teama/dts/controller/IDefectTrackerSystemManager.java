@@ -1,9 +1,9 @@
-package x46011.teama.dts.manager;
+package x46011.teama.dts.controller;
 
 import java.util.ArrayList;
 
-import x46011.teama.dts.defect.Defect;
-import x46011.teama.dts.entities.Person;
+import x46011.teama.dts.model.Defect;
+import x46011.teama.dts.model.Person;
 
 
 public interface IDefectTrackerSystemManager {

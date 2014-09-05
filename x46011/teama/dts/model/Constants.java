@@ -1,4 +1,4 @@
-package x46011.teama.dts.manager;
+package x46011.teama.dts.model;
 
 /**
  * The Constants class holds all the constants used by the application.

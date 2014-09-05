@@ -1,6 +1,6 @@
-package x46011.teama.dts.screens;
+package x46011.teama.dts.controller;
 
-import x46011.teama.dts.manager.IDefectTrackerSystemManager;
+import x46011.teama.dts.controller.IDefectTrackerSystemManager;
 
 
 public interface IDefectTrackerScreen {
