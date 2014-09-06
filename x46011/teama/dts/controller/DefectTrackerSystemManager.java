@@ -9,8 +9,7 @@ import x46011.teama.dts.controller.IDefectTrackerScreen;
 
 
 
-public class DefectTrackerSystemManager implements
-		IDefectTrackerSystemManager {
+public class DefectTrackerSystemManager {//implements IDefectTrackerSystemManager {
 
 	DefectTrackerSystemHost host;
 	IDefectTrackerScreen screen;
@@ -32,65 +31,71 @@ public class DefectTrackerSystemManager implements
 	 * host app should call this function when user is logged in
 	 */
 	public void initializeDefectTrackerSystem( Person user ) {
-		disposeScreen();
+		//disposeScreen();
 
 		currentUser = user;
 		
-		displayDefectList();
+		//displayDefectList();
 	}
 	
 	
-/***
- * functions to be called by screens
- */
-	@Override
+	/***
+	 * functions to be called by screens
+	 */
 	public ArrayList<Defect> getAllDefects() {
 		ArrayList<Defect> allDefects = dbCommunicator.getAllDefects();
 		return allDefects;
 	}
 	
+	private Integer saveCurrentDefect() {
+		//Integer defectId = dbCommunicator.saveDefect(currentDefect);
+		return null; //defectId;
+	}
+
+	
 	/***
 	 * called by DefectListScreen when user selects to create a new defect
 	 */
-	@Override
+	/*
 	public void createDefect() {
 		disposeScreen();
 		
-		//Defect defect = new Defect(currentUser);
-		//currentDefect = defect;
-		
-		displayCurrentDefectForEditing();
-	}
-
-	/***
-	 * called by DefectListScreen when user selects to edit a current defect
-	 */
-	@Override
-	public void editDefect(Defect defect) {
-		disposeScreen();
-
+		Defect defect = new Defect(currentUser);
 		currentDefect = defect;
 		
 		displayCurrentDefectForEditing();
+	}
+	*/
+	
+	/***
+	 * called by DefectListScreen when user selects to edit a current defect
+	 */
+	public void editDefect(Defect defect) {
+		//disposeScreen();
+
+		currentDefect = defect;
+		
+		//displayCurrentDefectForEditing();
 	}
 
 	/***
 	 * called by DefectEditScreen when user selects to save an edited defect
 	 */
-	@Override
 	public void saveDefect(Defect defect) {
-		disposeScreen();
+		
+		// do db update here
+		
+		//disposeScreen();
 
 		currentDefect = defect;
 		saveCurrentDefect();
 		
-		displayEmailScreen();
+		//displayEmailScreen();
 	}
 
 	/***
 	 * called by EmailScreen when user selects to email defect update to users
 	 */
-	@Override
 	public void emailUsers(ArrayList<String> emailAddresses) {
 
 	}
@@ -99,24 +104,23 @@ public class DefectTrackerSystemManager implements
 	 * called by any IDefectTrackerScreen when user cancels the action
 	 *  (would be called from list screen when user selects to exit the system)
 	 */
+	/*
 	@Override
 	public void cancel() {
 		IDefectTrackerScreen cancelledScreen = screen;
 		
-		//if (cancelledScreen instanceof DefectListScreen)
+		if (cancelledScreen instanceof DefectListScreen)
 			;// logoutUser();
-		//else if (cancelledScreen instanceof DefectEditScreen)
+		else if (cancelledScreen instanceof DefectEditScreen)
 			;// return to DefectListScreen
-		//else if (cancelledScreen instanceof EmailScreen)
+		else if (cancelledScreen instanceof EmailScreen)
 			;// return to DefectEditScreen
-		//else
+		else
 			;// probably log an error then return to DefectListScreen
 	}
-/***
- * END functions to be called by screens
- */
+	*/
 	
-	
+	/*
 	private void disposeScreen() {
 		if (screen!=null)
 		{
@@ -124,12 +128,9 @@ public class DefectTrackerSystemManager implements
 			screen = null;
 		}
 	}
+	*/
 	
-	private Integer saveCurrentDefect() {
-		//Integer defectId = dbCommunicator.saveDefect(currentDefect);
-		return null; //defectId;
-	}
-
+	/*
 	private void displayDefectList() {
 		//screen = new DefectListScreen();
 		screen.display(this);
@@ -144,4 +145,5 @@ public class DefectTrackerSystemManager implements
 		//screen = new EmailScreen( currentDefect );
 		screen.display(this);
 	}
+	*/
 }

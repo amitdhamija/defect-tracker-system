@@ -1,147 +1,210 @@
 package x46011.teama.dts.view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Container;
-import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.LayoutStyle;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import x46011.teama.dts.model.Constants;
+import x46011.teama.dts.model.Defect;
+import x46011.teama.dts.model.DefectPriority;
+import x46011.teama.dts.model.DefectStatus;
+import x46011.teama.dts.model.DefectTableModel;
+import x46011.teama.dts.model.Person;
 
 /**
  * The DefectTrackerSystem class runs the main thread and allows the user to navigate the application.
  * 
  * @author Amit Dhamija
  * @version 1.0
+ * @revision 1.1	Added method to get single instance of this class
+ * 					Updated class to use DefectTableModel and set properties on tableDefectList object
+ * 					Added event listeners for table selection and buttons
  */
 public class DefectTrackerSystem {
 
-    private JScrollPane scrollPaneDefectList;
-    private JScrollPane scrollPaneDescription;
-    private JTable tableDefectList;
-    private JTextArea textAreaDescription;
-    private JButton buttonAddDefect;
-    private JButton buttonModifyAssignDefect;
-    private JButton buttonEmailStatus;
-    private JLabel labelDescription;
+	private static DefectTrackerSystem dts;
+	private JTable tableDefectList;
+	private JTextArea textAreaDescription; 
     
+    private ArrayList<Defect> defectList = new ArrayList<Defect>();
+    
+    /**
+	 * Default constructor
+	 */
 	public DefectTrackerSystem() {
 		
+		// TODO: Remove test data
+		Person person1 = new Person("Amit Dhamija", "amit@gmail.com");
+		Person person2 = new Person("Tavis Cribbet", "travis@gmail.com");
+		Person person3 = new Person("Kevin Alexander", "kevin@gmail.com");
+		Person person4 = new Person("Thomas Hargrove", "thomas@gmail.com");
+		Person person5 = new Person("Kesha Smith", "kesha@yahoo.com");
+		
+		Date date1 = new Date();
+		Defect defect1 = new Defect(1, date1,person1, person4, DefectPriority.HIGH, DefectStatus.OPEN, "Summary1", "Description1");
+		Defect defect2 = new Defect(1, date1,person2, person5, DefectPriority.MEDIUM, DefectStatus.RESOLVED, "Summary2", "Description2");
+		Defect defect3 = new Defect(1, date1,person3, person2, DefectPriority.HIGH, DefectStatus.OPEN, "Summary3", "Description3");
+		Defect defect4 = new Defect(1, date1,person4, person3, DefectPriority.LOW, DefectStatus.CLOSED, "Summary4", "Description4");
+		Defect defect5 = new Defect(1, date1,person5, person1, DefectPriority.LOW, DefectStatus.CLOSED, "Summary5", "Description5");
+		
+		defectList.add(defect1);
+		defectList.add(defect2);
+		defectList.add(defect3);
+		defectList.add(defect4);
+		defectList.add(defect5);
+		//
 	}
-
+		
+	/**
+	 * Main method
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 		    public void run() {
-		    	DefectTrackerSystem app = new DefectTrackerSystem();
-				app.display();
+		    	getSingleInstance().display();
 		    }
 		});
 	}
-
+	
+	/**
+	 * Get the single instance of the application
+	 */
+	protected static DefectTrackerSystem getSingleInstance() {
+        if (dts == null)
+            dts = new DefectTrackerSystem();
+        return dts;
+    }
+	
 	public void display() {
 		JFrame frame = new JFrame();
 		frame.setTitle(Constants.DTS_TITLE);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(850, 550);
-		frame.setResizable(false);
+		frame.setSize(800, 550);
 		
-		Container pane = frame.getContentPane();
+		DefectTableModel defectTableModel = new DefectTableModel(defectList);
+		tableDefectList = new JTable();
+        tableDefectList.setModel(defectTableModel);
+        tableDefectList.getColumnModel().getColumn(0).setPreferredWidth(50);
+        tableDefectList.getColumnModel().getColumn(1).setPreferredWidth(50);
+        tableDefectList.getColumnModel().getColumn(2).setPreferredWidth(100);
+        tableDefectList.getColumnModel().getColumn(3).setPreferredWidth(100);
+        tableDefectList.getColumnModel().getColumn(4).setPreferredWidth(25);
+        tableDefectList.getColumnModel().getColumn(5).setPreferredWidth(50);
+        tableDefectList.getColumnModel().getColumn(6).setPreferredWidth(225);
+        tableDefectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        tableDefectList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting() ) {
+                    onRowSelected(tableDefectList.getSelectedRow());
+                }
+            }
+        });
+        
+        JScrollPane scrollPaneDefectList = new JScrollPane();
+        scrollPaneDefectList.setViewportView(tableDefectList);
+        
+        JLabel labelDescription = new JLabel();
+        labelDescription.setText(Constants.LABEL_DEFECT_DESCRIPTION);
+        
+        textAreaDescription = new JTextArea();
+        textAreaDescription.setColumns(20);
+        textAreaDescription.setRows(5);
+        
+        JScrollPane scrollPaneDescription = new JScrollPane();
+        scrollPaneDescription.setViewportView(textAreaDescription);
+
+        JButton buttonAddDefect = new JButton();
+        buttonAddDefect.setText(Constants.ADD_DEFECT);
+        buttonAddDefect.addActionListener(new java.awt.event.ActionListener() {
+        	@Override
+            public void actionPerformed(ActionEvent event) {
+                onAddDefectButtonClicked(event);
+            }
+        });
+
+        JButton buttonModifyAssignDefect = new JButton();
+        buttonModifyAssignDefect.setText(Constants.MODIFY_ASSIGN_DEFECT);
+        buttonModifyAssignDefect.addActionListener(new java.awt.event.ActionListener() {
+        	@Override
+            public void actionPerformed(ActionEvent event) {
+            	onModifyAssignButtonClicked(event);
+            }
+        });
+
+        JButton buttonEmailStatus = new JButton();
+        buttonEmailStatus.setText(Constants.EMAIL_STATUS);
+        buttonEmailStatus.addActionListener(new java.awt.event.ActionListener() {
+        	@Override
+            public void actionPerformed(ActionEvent event) {
+        		onEmailStatusButtonClicked(event);
+            }
+        });
+
+        Container pane = frame.getContentPane();
+        GroupLayout layout = new GroupLayout(pane);
+        pane.setLayout(layout);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup()
+            .addComponent(scrollPaneDefectList)
+            .addGroup(layout.createParallelGroup()
+            		.addComponent(labelDescription))
+            		.addComponent(scrollPaneDescription)
+            		.addGroup(layout.createSequentialGroup()
+            				.addComponent(buttonAddDefect)
+            				.addComponent(buttonModifyAssignDefect)
+            				.addComponent(buttonEmailStatus))
+        );
+        layout.setVerticalGroup(
+            layout.createSequentialGroup()
+            .addComponent(scrollPaneDefectList)
+            .addComponent(labelDescription)
+            .addComponent(scrollPaneDescription)
+            .addGroup(layout.createParallelGroup()
+            		.addComponent(buttonAddDefect)
+            		.addComponent(buttonEmailStatus)
+            		.addComponent(buttonModifyAssignDefect))
+        );
+        
+        frame.setVisible(true);
+        
+        // TODO: Worker thread?
+        // TODO: Move this for post-data received; also check if table contains any data
+        tableDefectList.changeSelection(0, 0, false, false);
+        buttonModifyAssignDefect.setEnabled(true);
+        buttonEmailStatus.setEnabled(true);
+	}
+	
+	private void onRowSelected(int row) {
+		textAreaDescription.setText(defectList.get(row).getDescription());
+	}
+	
+	private void onAddDefectButtonClicked(ActionEvent event) {
 		
-		scrollPaneDefectList = new JScrollPane();
-        tableDefectList = new JTable();
-        labelDescription = new JLabel();
-        scrollPaneDescription = new JScrollPane();
-        textAreaDescription = new javax.swing.JTextArea();
-        buttonAddDefect = new JButton();
-        buttonModifyAssignDefect = new JButton();
-        buttonEmailStatus = new JButton();
+	}
+	
+	private void onModifyAssignButtonClicked(ActionEvent event) {
 		
-        tableDefectList.setModel(new DefaultTableModel(
-	            new Object [][] {
-	                {"0001", "Defect Summary", "8/20/2014", "HIGH", "OPEN", "Thomas", "Amit"},
-	                {"0002", "Defect Summary 2", "8/20/2014", "MEDIUM", "RESOLVED", "Amit", "Kevin"},
-	                {"0003", "Defect Summary 3", "8/20/2014", "MEDIUM", "SUBMITTED", "Kevin", "<UNASSIGNED>"},
-	                {"0004", "Defect Summary 4", "8/20/2014", "LOW", "OPEN", "Travis", "Travis"},
-	                {"0005", "Defect Summary 5", "8/20/2014", "HIGH", "CLOSED", "Kevin", "Thomas"}
-	            },
-	            new String [] {
-	                Constants.DEFECT_ID, Constants.DEFECT_DATE, Constants.DEFECT_REPORTER, Constants.DEFECT_ASSIGNEE, Constants.DEFECT_PRIORITY, Constants.DEFECT_STATUS, Constants.DEFECT_SUMMARY
-	            }
-	        ) {
-	            Class[] types = new Class [] {
-	                java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
-	            };
+	}
 
-	            public Class getColumnClass(int columnIndex) {
-	                return types [columnIndex];
-	            }
-	        });
-	        scrollPaneDefectList.setViewportView(tableDefectList);
-
-	        labelDescription.setText(Constants.LABEL_DEFECT_DESCRIPTION);
-	        textAreaDescription.setColumns(20);
-	        textAreaDescription.setRows(5);
-	        textAreaDescription.setText("Description 1");
-	        scrollPaneDescription.setViewportView(textAreaDescription);
-
-	        buttonAddDefect.setText(Constants.ADD_DEFECT);
-	        buttonAddDefect.addActionListener(new java.awt.event.ActionListener() {
-	            public void actionPerformed(java.awt.event.ActionEvent evt) {
-	                //buttonAddDefectActionPerformed(evt);
-	            }
-	        });
-
-	        buttonModifyAssignDefect.setText(Constants.MODIFY_ASSIGN_DEFECT);
-	        buttonModifyAssignDefect.addActionListener(new java.awt.event.ActionListener() {
-	            public void actionPerformed(java.awt.event.ActionEvent evt) {
-	                //buttonModifyAssignDefectActionPerformed(evt);
-	            }
-	        });
-
-	        buttonEmailStatus.setText(Constants.EMAIL_STATUS);
-	        buttonEmailStatus.addActionListener(new java.awt.event.ActionListener() {
-	            public void actionPerformed(java.awt.event.ActionEvent evt) {
-	                //buttonEmailStatusActionPerformed(evt);
-	            }
-	        });
-
-	        GroupLayout layout = new GroupLayout(pane);
-	        pane.setLayout(layout);
-	        layout.setAutoCreateGaps(true);
-	        layout.setAutoCreateContainerGaps(true);
-	        layout.setHorizontalGroup(
-	            layout.createParallelGroup()
-	            .addComponent(scrollPaneDefectList)
-	            .addGroup(layout.createParallelGroup()
-	            		.addComponent(labelDescription))
-	            		.addComponent(scrollPaneDescription)
-	            		.addGroup(layout.createSequentialGroup()
-	            				.addComponent(buttonAddDefect)
-	            				.addComponent(buttonModifyAssignDefect)
-	            				.addComponent(buttonEmailStatus))
-	        );
-	        layout.setVerticalGroup(
-	            layout.createSequentialGroup()
-	            .addComponent(scrollPaneDefectList)
-	            .addComponent(labelDescription)
-	            .addComponent(scrollPaneDescription)
-	            .addGroup(layout.createParallelGroup()
-	            		.addComponent(buttonAddDefect)
-	            		.addComponent(buttonEmailStatus)
-	            		.addComponent(buttonModifyAssignDefect))
-	        );
-		
-		frame.setVisible(true);
+	private void onEmailStatusButtonClicked(ActionEvent event) {
+	
 	}
 }
