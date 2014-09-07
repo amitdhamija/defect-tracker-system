@@ -5,11 +5,17 @@ package x46011.teama.dts.model;
  * 
  * @author Amit Dhamija
  * @version 1.0
+ * @revision 1.1	Added additional constants
  */
 public final class Constants {
 
-	public static final String COLON = ": ";
+	public static final int DTS_FRAME_SIZE_WIDTH = 850;
+	public static final int DTS_FRAME_SIZE_HEIGHT = 550;
 	
+	public static final int DTS_DIALOG_SIZE_WIDTH = 450;
+	public static final int DTS_DIALOG_SIZE_HEIGHT = 200;
+	
+	public static final String COLON = ": ";
 	public static final String DTS_TITLE = "Defect Tracker System";
 	
 	public static final String DEFECT_ID = "Defect ID";
@@ -17,7 +23,7 @@ public final class Constants {
 	public static final String DEFECT_SUMMARY = "Summary";
 	public static final String DEFECT_PRIORITY = "Priority";
 	public static final String DEFECT_STATUS = "Status";
-	public static final String DEFECT_REPORTER = "Reporter";
+	public static final String DEFECT_SUBMITTER = "Submitter";
 	public static final String DEFECT_ASSIGNEE = "Assignee";
 	public static final String DEFECT_DESCRIPTION = "Description";
 	
@@ -29,7 +35,7 @@ public final class Constants {
 	public static final String LABEL_DEFECT_SUMMARY = DEFECT_SUMMARY + COLON;
 	public static final String LABEL_DEFECT_PRIORITY = DEFECT_PRIORITY + COLON;
 	public static final String LABEL_DEFECT_STATUS = DEFECT_STATUS + COLON;
-	public static final String LABEL_DEFECT_REPORTER = DEFECT_REPORTER + COLON;
+	public static final String LABEL_DEFECT_REPORTER = DEFECT_SUBMITTER + COLON;
 	public static final String LABEL_DEFECT_ASSIGNEE = DEFECT_ASSIGNEE + COLON;
 	public static final String LABEL_DEFECT_DESCRIPTION = DEFECT_DESCRIPTION + COLON;
 	public static final String SAVE = "Save";

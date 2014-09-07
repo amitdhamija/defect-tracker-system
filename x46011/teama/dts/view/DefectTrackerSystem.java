@@ -1,6 +1,7 @@
 package x46011.teama.dts.view;
 
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,12 +33,17 @@ import x46011.teama.dts.model.Person;
  * @revision 1.1	Added method to get single instance of this class
  * 					Updated class to use DefectTableModel and set properties on tableDefectList object
  * 					Added event listeners for table selection and buttons
+ * @revision 1.2	Added code to get Defect data from selected table row and pass it to ModifyAssignDialog
+ * 					Added code to use Dimension object and get frame size from Constants class
  */
 public class DefectTrackerSystem {
 
 	private static DefectTrackerSystem dts;
+	private JFrame frame;
 	private JTable tableDefectList;
-	private JTextArea textAreaDescription; 
+	private JTextArea textAreaDescription;
+	
+	private Defect defect;
     
     private ArrayList<Defect> defectList = new ArrayList<Defect>();
     
@@ -90,10 +96,10 @@ public class DefectTrackerSystem {
     }
 	
 	public void display() {
-		JFrame frame = new JFrame();
+		frame = new JFrame();
 		frame.setTitle(Constants.DTS_TITLE);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(800, 550);
+		frame.setSize(new Dimension(Constants.DTS_FRAME_SIZE_WIDTH, Constants.DTS_FRAME_SIZE_HEIGHT));
 		
 		DefectTableModel defectTableModel = new DefectTableModel(defectList);
 		tableDefectList = new JTable();
@@ -134,7 +140,7 @@ public class DefectTrackerSystem {
         buttonAddDefect.addActionListener(new java.awt.event.ActionListener() {
         	@Override
             public void actionPerformed(ActionEvent event) {
-                onAddDefectButtonClicked(event);
+                onAddDefectButtonClicked();
             }
         });
 
@@ -143,7 +149,7 @@ public class DefectTrackerSystem {
         buttonModifyAssignDefect.addActionListener(new java.awt.event.ActionListener() {
         	@Override
             public void actionPerformed(ActionEvent event) {
-            	onModifyAssignButtonClicked(event);
+            	onModifyAssignButtonClicked(tableDefectList.getSelectedRow());
             }
         });
 
@@ -152,7 +158,7 @@ public class DefectTrackerSystem {
         buttonEmailStatus.addActionListener(new java.awt.event.ActionListener() {
         	@Override
             public void actionPerformed(ActionEvent event) {
-        		onEmailStatusButtonClicked(event);
+        		onEmailStatusButtonClicked(tableDefectList.getSelectedRow());
             }
         });
 
@@ -164,14 +170,12 @@ public class DefectTrackerSystem {
         layout.setHorizontalGroup(
             layout.createParallelGroup()
             .addComponent(scrollPaneDefectList)
-            .addGroup(layout.createParallelGroup()
-            		.addComponent(labelDescription))
-            		.addComponent(scrollPaneDescription)
-            		.addGroup(layout.createSequentialGroup()
-            				.addComponent(buttonAddDefect)
-            				.addComponent(buttonModifyAssignDefect)
-            				.addComponent(buttonEmailStatus))
-        );
+            .addComponent(labelDescription)
+            .addComponent(scrollPaneDescription)
+            .addGroup(layout.createSequentialGroup()
+            		.addComponent(buttonAddDefect)
+            		.addComponent(buttonModifyAssignDefect)
+            		.addComponent(buttonEmailStatus)));
         layout.setVerticalGroup(
             layout.createSequentialGroup()
             .addComponent(scrollPaneDefectList)
@@ -180,8 +184,7 @@ public class DefectTrackerSystem {
             .addGroup(layout.createParallelGroup()
             		.addComponent(buttonAddDefect)
             		.addComponent(buttonEmailStatus)
-            		.addComponent(buttonModifyAssignDefect))
-        );
+            		.addComponent(buttonModifyAssignDefect)));
         
         frame.setVisible(true);
         
@@ -193,18 +196,19 @@ public class DefectTrackerSystem {
 	}
 	
 	private void onRowSelected(int row) {
-		textAreaDescription.setText(defectList.get(row).getDescription());
+		defect = defectList.get(row);
+		textAreaDescription.setText(defect.getDescription());
 	}
 	
-	private void onAddDefectButtonClicked(ActionEvent event) {
-		
+	private void onAddDefectButtonClicked() {
 	}
 	
-	private void onModifyAssignButtonClicked(ActionEvent event) {
-		
+	private void onModifyAssignButtonClicked(int row) {
+		defect = defectList.get(row);
 	}
 
-	private void onEmailStatusButtonClicked(ActionEvent event) {
-	
+	private void onEmailStatusButtonClicked(int row) {
+		defect = defectList.get(row);
+		EmailDialog emailDialog = new EmailDialog(frame, defect);
 	}
 }

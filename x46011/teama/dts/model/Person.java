@@ -1,41 +1,36 @@
 package x46011.teama.dts.model;
 
+/**
+ * The Defect model object
+ * 
+ * @author Travis Cribbet
+ * @author Amit Dhamija
+ * @version 1.0
+ * @revision 1.1	Added spaces and renamed variables using standard naming convention
+ * 	
+ */
 public class Person {
-	private int ID;
-	private String FirstName;
-	private String LastName;
-	private String Email;
-	public Person(int Id, String firstName, String lastName, String email)
-	{
-		setId(Id);
-		setName(firstName, lastName);
-		setEmail(email);
+	private String name;
+	private String email;
+	
+	public Person(String name, String email) {
+		this.name = name;
+		this.email = email;
 	}
-	public Person(String firstName, String lastName, String email)
-	{
-		setName(firstName, lastName);
-		setEmail(email);
+	
+	public String getName() {
+		return name;
 	}
-	public String getFirstName() {
-		return FirstName;
+	
+	public void setName(String name) {
+		this.name = name;
 	}
-	public String getLastName() {
-		return LastName;
-	}
-	public void setName(String firstName, String lastName) {
-		FirstName = firstName;
-		LastName = lastName;
-	}
+	
 	public String getEmail() {
-		return Email;
+		return email;
 	}
+	
 	public void setEmail(String email) {
-		Email = email;
-	}
-	public int getId() {
-		return ID;
-	}
-	public void setId(int Id) {
-		ID = Id;
+		this.email = email;
 	}
 }
