@@ -8,9 +8,9 @@ import java.util.Date;
  * @author Travis Cribbet
  * @author Amit Dhamija
  * @version 1.0
- * @revision 1.1	Added spaces
- * @revision 1.2	Organized members to match the table order for readability
- * @revision 1.3	Added default constructor
+ * @revision 1.1	Amit Dhamija: Added spaces
+ * @revision 1.2	Amit Dhamija: Organized members to match the table order for readability
+ * @revision 1.3	Amit Dhamija: Added default constructor
  */
 public class Defect {
 	
@@ -19,13 +19,13 @@ public class Defect {
 	private Person submitter;
 	private Person assignee;
 	private DefectPriority priority;
-	private DefectStatus status;
+	private Status status;
 	private String summary;
 	private String description;
 	
 	public Defect() {}
 	
-	public Defect(int id, Date date, Person submitter, Person assignee, DefectPriority priority, DefectStatus status, String summary, String description) {
+	public Defect(int id, Date date, Person submitter, Person assignee, DefectPriority priority, Status status, String summary, String description) {
 		this.id = id;
 		this.date = date;
 		this.submitter = submitter;
@@ -76,11 +76,11 @@ public class Defect {
 		this.priority = priority;
 	}
 	
-	public DefectStatus getStatus() {
+	public Status getStatus() {
 		return status;
 	}
 	
-	public void setStatus(DefectStatus status) {
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 	

@@ -209,10 +209,11 @@ public class DataBaseHelper implements IDatabaseCommunications {
 		  ResultSet result = statement.executeQuery(sql);
 		  while(result.next())
 		  {
+			  int id = result.getInt(0);
 			  String first = result.getString("first");
 			  String last = result.getString("last");
 			  String email = result.getString("email");
-			  personList.add(new Person(first, last, email));
+			  personList.add(new Person(id, first, last, email));
 		  }
 		  connection.close();
 		  return personList;
@@ -286,9 +287,9 @@ public class DataBaseHelper implements IDatabaseCommunications {
 		  Statement statement = connection.createStatement();
 		  String sql = "insert into DefectTable (reporter_id, summary, details, assignee_id, status_id, priority) " + 
 		            "values (" +
-	                defect.getReporter().getId() + ","  +
+	                defect.getSubmitter().getId() + ","  +
 	                "'" + defect.getSummary()    + "'," +
-	                "'" + defect.getDetails()    + "'," +
+	                "'" + defect.getDescription()    + "'," +
 	                defect.getAssignee().getId() + ","  +
 	                defect.getStatus().getId()  + ","  +
 	                defect.getPriority().ordinal()  + ")";
@@ -323,10 +324,13 @@ public class DataBaseHelper implements IDatabaseCommunications {
 		  int assigneeId = result.getInt("assignee_id");
 		  int statusId = result.getInt("status_id");
 		  DefectPriority priority = DefectPriority.values()[result.getInt("priority")];
-		  Person reporter = getPerson(reporterId);
+		  Person submitter = getPerson(reporterId);
 		  Person assignee = getPerson(assigneeId);
 		  Status status = getStatus(statusId);
-		  Defect currentDefect = new Defect(date, id, reporter, summary, details, assignee, status, priority);
+		  //Defect currentDefect = new Defect(date, id, reporter, summary, details, assignee, status, priority);
+		  
+		  // TODO: Where is the description? We need to get description from database too.
+		  Defect currentDefect = new Defect(id, date, submitter, assignee, priority, status, summary, "fake description");
 		  defectList.add(currentDefect);
 	    }
 	  
@@ -337,6 +341,24 @@ public class DataBaseHelper implements IDatabaseCommunications {
 		  return new ArrayList<Defect>();
 	  }
   }
+
+@Override
+public ArrayList<Defect> getAllDefects() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public Defect getDefect(Integer defectId) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public void saveDefect(Defect defect) {
+	// TODO Auto-generated method stub
+	
+}
   
 
   

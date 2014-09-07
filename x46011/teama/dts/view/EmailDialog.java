@@ -24,6 +24,12 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+/**
+ * The EmailDialog class shows the Dialog to email Defect status to the recipient.
+ * 
+ * @author Amit Dhamija
+ * @version 1.0
+ */
 class EmailDialog extends JDialog implements ActionListener, PropertyChangeListener, ItemListener {
     
 	private static final long serialVersionUID = 1L;
@@ -44,11 +50,11 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
         this.defect = defect;
         
         // TODO: Remove test data; use getUsers() from manager
-        Person person1 = new Person("Amit Dhamija", "amit@gmail.com");
-		Person person2 = new Person("Tavis Cribbet", "travis@gmail.com");
-		Person person3 = new Person("Kevin Alexander", "kevin@gmail.com");
-		Person person4 = new Person("Thomas Hargrove", "thomas@gmail.com");
-		Person person5 = new Person("Kesha Smith", "kesha@yahoo.com");
+        Person person1 = new Person(1, "Amit", "Dhamija", "amit@gmail.com");
+		Person person2 = new Person(2, "Tavis", "Cribbet", "travis@gmail.com");
+		Person person3 = new Person(3, "Kevin", "Alexander", "kevin@gmail.com");
+		Person person4 = new Person(4, "Thomas", "Hargrove", "thomas@gmail.com");
+		Person person5 = new Person(5, "Kesha", "Smith", "kesha@yahoo.com");
 		recipients.add(person1);
 		recipients.add(person2);
 		recipients.add(person3);

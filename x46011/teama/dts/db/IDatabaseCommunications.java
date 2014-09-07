@@ -1,5 +1,6 @@
 package x46011.teama.dts.db;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import x46011.teama.dts.model.Defect;
@@ -21,5 +22,8 @@ public interface IDatabaseCommunications {
         public void addStatus(Status status);
         public void deleteStatus(Status status);
         public List<Status> getStatusList();      
-        public List<Person> getPersonList();       
+        public List<Person> getPersonList(); 
+        public ArrayList<Defect> getAllDefects();
+        public Defect getDefect( Integer defectId );
+        public void saveDefect( Defect defect );
 }

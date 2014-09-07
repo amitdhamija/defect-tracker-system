@@ -5,7 +5,7 @@ package x46011.teama.dts.model;
  * 
  * @author Amit Dhamija
  * @version 1.0
- * @revision 1.1	Added additional constants
+ * @revision 1.1	Amit Dhamija: Added additional constants
  */
 public final class Constants {
 

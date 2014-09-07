@@ -9,7 +9,7 @@ import x46011.teama.dts.controller.IDefectTrackerScreen;
 
 
 
-public class DefectTrackerSystemManager {//implements IDefectTrackerSystemManager {
+public class DefectTrackerSystemManager implements IDefectTrackerSystemManager {
 
 	DefectTrackerSystemHost host;
 	IDefectTrackerScreen screen;
@@ -98,6 +98,18 @@ public class DefectTrackerSystemManager {//implements IDefectTrackerSystemManage
 	 */
 	public void emailUsers(ArrayList<String> emailAddresses) {
 
+	}
+
+	@Override
+	public void createDefect() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void cancel() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/***

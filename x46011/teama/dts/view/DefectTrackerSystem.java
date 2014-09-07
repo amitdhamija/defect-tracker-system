@@ -24,17 +24,18 @@ import x46011.teama.dts.model.DefectPriority;
 import x46011.teama.dts.model.DefectStatus;
 import x46011.teama.dts.model.DefectTableModel;
 import x46011.teama.dts.model.Person;
+import x46011.teama.dts.model.Status;
 
 /**
  * The DefectTrackerSystem class runs the main thread and allows the user to navigate the application.
  * 
  * @author Amit Dhamija
  * @version 1.0
- * @revision 1.1	Added method to get single instance of this class
- * 					Updated class to use DefectTableModel and set properties on tableDefectList object
- * 					Added event listeners for table selection and buttons
- * @revision 1.2	Added code to get Defect data from selected table row and pass it to ModifyAssignDialog
- * 					Added code to use Dimension object and get frame size from Constants class
+ * @revision 1.1	Amit Dhamija: Added method to get single instance of this class
+ * 					Amit Dhamija: Updated class to use DefectTableModel and set properties on tableDefectList object
+ * 					Amit Dhamija: Added event listeners for table selection and buttons
+ * @revision 1.2	Amit Dhamija: Added code to get Defect data from selected table row and pass it to ModifyAssignDialog
+ * 					Amit Dhamija: Added code to use Dimension object and get frame size from Constants class
  */
 public class DefectTrackerSystem {
 
@@ -53,18 +54,20 @@ public class DefectTrackerSystem {
 	public DefectTrackerSystem() {
 		
 		// TODO: Remove test data
-		Person person1 = new Person("Amit Dhamija", "amit@gmail.com");
-		Person person2 = new Person("Tavis Cribbet", "travis@gmail.com");
-		Person person3 = new Person("Kevin Alexander", "kevin@gmail.com");
-		Person person4 = new Person("Thomas Hargrove", "thomas@gmail.com");
-		Person person5 = new Person("Kesha Smith", "kesha@yahoo.com");
-		
+		Person person1 = new Person(1, "Amit", "Dhamija", "amit@gmail.com");
+		Person person2 = new Person(2, "Tavis", "Cribbet", "travis@gmail.com");
+		Person person3 = new Person(3, "Kevin", "Alexander", "kevin@gmail.com");
+		Person person4 = new Person(4, "Thomas", "Hargrove", "thomas@gmail.com");
+		Person person5 = new Person(5, "Kesha", "Smith", "kesha@yahoo.com");
+		Status status1 = new Status(1, DefectStatus.OPEN);
+		Status status2 = new Status(1, DefectStatus.CLOSED);
+		Status status3 = new Status(1, DefectStatus.RESOLVED);
 		Date date1 = new Date();
-		Defect defect1 = new Defect(1, date1,person1, person4, DefectPriority.HIGH, DefectStatus.OPEN, "Summary1", "Description1");
-		Defect defect2 = new Defect(1, date1,person2, person5, DefectPriority.MEDIUM, DefectStatus.RESOLVED, "Summary2", "Description2");
-		Defect defect3 = new Defect(1, date1,person3, person2, DefectPriority.HIGH, DefectStatus.OPEN, "Summary3", "Description3");
-		Defect defect4 = new Defect(1, date1,person4, person3, DefectPriority.LOW, DefectStatus.CLOSED, "Summary4", "Description4");
-		Defect defect5 = new Defect(1, date1,person5, person1, DefectPriority.LOW, DefectStatus.CLOSED, "Summary5", "Description5");
+		Defect defect1 = new Defect(1, date1,person1, person4, DefectPriority.HIGH, status1, "Summary1", "Description1");
+		Defect defect2 = new Defect(1, date1,person2, person5, DefectPriority.MEDIUM, status3, "Summary2", "Description2");
+		Defect defect3 = new Defect(1, date1,person3, person2, DefectPriority.HIGH, status1, "Summary3", "Description3");
+		Defect defect4 = new Defect(1, date1,person4, person3, DefectPriority.LOW, status2, "Summary4", "Description4");
+		Defect defect5 = new Defect(1, date1,person5, person1, DefectPriority.LOW, status2, "Summary5", "Description5");
 		
 		defectList.add(defect1);
 		defectList.add(defect2);
