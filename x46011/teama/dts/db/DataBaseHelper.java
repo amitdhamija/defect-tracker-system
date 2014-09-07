@@ -1,3 +1,5 @@
+package x46011.teama.dts.db;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -7,9 +9,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import x46011.teama.dts.model.Defect;
+import x46011.teama.dts.model.DefectPriority;
+import x46011.teama.dts.model.DefectStatus;
+import x46011.teama.dts.model.Person;
+import x46011.teama.dts.model.Status;
 
 
-public class DataBaseHelper {
+
+public class DataBaseHelper implements IDatabaseCommunications {
   private static final String dbName = "DefectTracker";
   private static final String url = "jdbc:mysql://localhost/"; 
   private static final String user = "root"; 
@@ -51,7 +59,7 @@ public class DataBaseHelper {
               " status_id INTEGER not NULL, " + 
               " priority INTEGER not NULL, " + 
               " PRIMARY KEY ( id ))"; 
-	    int result = statement.executeUpdate(sql);
+	    statement.executeUpdate(sql);
 	    connection.close();
 	  }catch (SQLException e)
 	  {
@@ -68,7 +76,7 @@ public class DataBaseHelper {
               "(id INTEGER not NULL, " +
               " text VARCHAR(255), " + 
               " PRIMARY KEY ( id ))"; 
-	    int result = statement.executeUpdate(sql);
+	    statement.executeUpdate(sql);
 	    connection.close();
 	  }catch (SQLException e)
 	  {
@@ -86,7 +94,7 @@ public class DataBaseHelper {
                 " last VARCHAR(255), " + 
                 " email VARCHAR(255), " + 
                 " PRIMARY KEY ( id ))"; 
-	    int result = statement.executeUpdate(sql);
+	    statement.executeUpdate(sql);
 	    connection.close();
 	  }catch(SQLException e) {
 		  return; 
@@ -94,16 +102,16 @@ public class DataBaseHelper {
 	  
   }
   
-  public void deleteUser(User userInfo)
+  public void deletePerson(Person personInfo)
   {
 	  try
 	  {
 		  connection = DriverManager.getConnection(url + dbName, user, password);
 		  Statement statement = connection.createStatement();
 		  String sql = "delete from UserTable where " + 
-	                "first='"+  userInfo.getFirstName() + "' and " +
-	                "last='" +  userInfo.getLastName() +  "' and " + 
-	                "email='" + userInfo.getEmail() +     "'";
+	                "first='"+  personInfo.getFirstName() + "' and " +
+	                "last='" +  personInfo.getLastName() +  "' and " + 
+	                "email='" + personInfo.getEmail() +     "'";
 		  int result = statement.executeUpdate(sql);
 		  connection.close();
 	  }catch(SQLException e)
@@ -111,7 +119,7 @@ public class DataBaseHelper {
 		  e.printStackTrace();
 	  }
   }
-  public void addUser(User userInfo)
+  public void addPerson(Person userInfo)
   {
 	  try
 	  {
@@ -139,8 +147,8 @@ public class DataBaseHelper {
 		  String sql = "insert into StatusTable (id, text) " + 
 		            "values (" +
 	                status.getId() + ",'" +
-	                status.getStatus()  + "')";
-		  int result = statement.executeUpdate(sql);
+	                status.getStatus().toString()  + "')";
+		  statement.executeUpdate(sql);
 		  connection.close();
 	  }catch(SQLException e)
 	  {
@@ -155,8 +163,8 @@ public class DataBaseHelper {
 		  connection = DriverManager.getConnection(url + dbName, user, password);
 		  Statement statement = connection.createStatement();
 		  String sql = "delete from UserTable where " + 
-	                "id="+  status.getId() + " and " +
-	                "text='" +  status.getStatus() + "'";
+	                "id="+  status.getId() +  " and " +
+	                "text='" +  status.getStatus().toString() + "'";
 		  int result = statement.executeUpdate(sql);
 		  connection.close();
 	  }catch(SQLException e)
@@ -177,7 +185,7 @@ public class DataBaseHelper {
 		  while(result.next())
 		  {
 			  int id = result.getInt("id");
-			  String stat = result.getString("text");	 
+			  DefectStatus stat = Enum.valueOf(DefectStatus.class, result.getString("text"));
 			  statusList.add(new Status(id, stat));
 		  }
 		  connection.close();
@@ -190,11 +198,11 @@ public class DataBaseHelper {
 	  }
   }
   
-  public List<User> getUserList()
+  public List<Person> getPersonList()
   {
 	  try
 	  {
-		  List<User> userList = new ArrayList<User>();
+		  List<Person> personList = new ArrayList<Person>();
 		  connection = DriverManager.getConnection(url + dbName, user, password);
 		  Statement statement = connection.createStatement();
 		  String sql = "select * from UserTable";
@@ -204,23 +212,23 @@ public class DataBaseHelper {
 			  String first = result.getString("first");
 			  String last = result.getString("last");
 			  String email = result.getString("email");
-			  userList.add(new User(first, last, email));
+			  personList.add(new Person(first, last, email));
 		  }
 		  connection.close();
-		  return userList;
+		  return personList;
 		  
 	  }catch(SQLException e)
 	  {
 		  e.printStackTrace();
-		  return new ArrayList<User>();
+		  return new ArrayList<Person>();
 	  }
   }
   
-  public User getUser(int id)
+  public Person getPerson(int id)
   {
 	  try
 	  {
-		  User selectedUser;
+		  Person selectedPerson;
 		  connection = DriverManager.getConnection(url + dbName, user, password);
 		  Statement statement = connection.createStatement();
 		  String sql = "select * from UserTable where " + 
@@ -231,8 +239,8 @@ public class DataBaseHelper {
 			  String first = result.getString("first");
 			  String last = result.getString("last");
 			  String email = result.getString("email");
-			  selectedUser = new User(id, first, last, email);
-			  return selectedUser;
+			  selectedPerson = new Person(id, first, last, email);
+			  return selectedPerson;
 		  }
 		  connection.close();
 		  return null;
@@ -256,8 +264,8 @@ public class DataBaseHelper {
 		  ResultSet result = statement.executeQuery(sql);
 		  while(result.next())
 		  {
-			  String text = result.getString("text");		 
-			  selectedStatus = new Status(id, text);
+			  DefectStatus defectStatus = Enum.valueOf(DefectStatus.class,result.getString("text"));		 
+			  selectedStatus = new Status(id, defectStatus);
 			  return selectedStatus;
 		  }
 		  connection.close();
@@ -282,8 +290,8 @@ public class DataBaseHelper {
 	                "'" + defect.getSummary()    + "'," +
 	                "'" + defect.getDetails()    + "'," +
 	                defect.getAssignee().getId() + ","  +
-	                defect.getStatus().getId()   + ","  +
-	                defect.getPriority() + ")";
+	                defect.getStatus().getId()  + ","  +
+	                defect.getPriority().ordinal()  + ")";
 		  int result = statement.executeUpdate(sql);
 		  connection.close();
 	  }catch(SQLException e)
@@ -291,6 +299,10 @@ public class DataBaseHelper {
 		  e.printStackTrace();
 	  }
   }
+  
+  
+  
+ 
   
   public List<Defect> getDefectList()
   {
@@ -310,11 +322,11 @@ public class DataBaseHelper {
 		  String details = result.getString("details");
 		  int assigneeId = result.getInt("assignee_id");
 		  int statusId = result.getInt("status_id");
-		  int priority = result.getInt("priority");
-		  User reporter = getUser(reporterId);
-		  User assignee = getUser(assigneeId);
+		  DefectPriority priority = DefectPriority.values()[result.getInt("priority")];
+		  Person reporter = getPerson(reporterId);
+		  Person assignee = getPerson(assigneeId);
 		  Status status = getStatus(statusId);
-		  Defect currentDefect = new Defect(date.toString(), id, reporter, summary, details, assignee, status, priority);
+		  Defect currentDefect = new Defect(date, id, reporter, summary, details, assignee, status, priority);
 		  defectList.add(currentDefect);
 	    }
 	  
