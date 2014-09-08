@@ -16,14 +16,24 @@ import x46011.teama.dts.model.Person;
 import x46011.teama.dts.model.Status;
 
 
-
-public class DataBaseHelper implements IDatabaseCommunications {
+/**
+ * DTSCommManager handles interactions between the UI and the DB Communicator
+ * 
+ * @author Travis Cribbet
+ * @version 1.0
+ * @revision 1.1	Kevin Alexander: Removed unneccesary functions
+ * @revision 1.2	Kevin Alexander: Renamed function using "Person" to user "User" to better fit domain terminology 
+ * @revision 1.3	Kevin Alexander: Moved main return statements in getUser and getStatus outside of while loop so
+ * 									 that the connection is closed prior to function return
+ * @revision 1.4	Kevin Alexander: Implemented getDefect 
+ */
+public class DatabaseCommunicator implements IDatabaseCommunications {
   private static final String dbName = "DefectTracker";
   private static final String url = "jdbc:mysql://localhost/"; 
   private static final String user = "root"; 
   private static final String password = "sql";
   private Connection connection;
-  public DataBaseHelper()
+  public DatabaseCommunicator()
   {
 		CreateDataBase();
 		CreateUserTable();
@@ -102,7 +112,7 @@ public class DataBaseHelper implements IDatabaseCommunications {
 	  
   }
   
-  public void deletePerson(Person personInfo)
+  public void deleteUser(Person personInfo)
   {
 	  try
 	  {
@@ -119,7 +129,7 @@ public class DataBaseHelper implements IDatabaseCommunications {
 		  e.printStackTrace();
 	  }
   }
-  public void addPerson(Person userInfo)
+  public void addUser(Person userInfo)
   {
 	  try
 	  {
@@ -198,7 +208,7 @@ public class DataBaseHelper implements IDatabaseCommunications {
 	  }
   }
   
-  public List<Person> getPersonList()
+  public List<Person> getUsersList()
   {
 	  try
 	  {
@@ -225,26 +235,25 @@ public class DataBaseHelper implements IDatabaseCommunications {
 	  }
   }
   
-  public Person getPerson(int id)
+  public Person getUser(int id)
   {
 	  try
 	  {
-		  Person selectedPerson;
+		  Person selectedPerson = null;
 		  connection = DriverManager.getConnection(url + dbName, user, password);
 		  Statement statement = connection.createStatement();
 		  String sql = "select * from UserTable where " + 
 		    "id=" + id;
 		  ResultSet result = statement.executeQuery(sql);
-		  while(result.next())
+		  while(selectedPerson==null && result.next())
 		  {
 			  String first = result.getString("first");
 			  String last = result.getString("last");
 			  String email = result.getString("email");
 			  selectedPerson = new Person(id, first, last, email);
-			  return selectedPerson;
 		  }
 		  connection.close();
-		  return null;
+		  return selectedPerson;
 		  
 	  }catch(SQLException e)
 	  {
@@ -257,23 +266,22 @@ public class DataBaseHelper implements IDatabaseCommunications {
   {
 	  try
 	  {
-		  Status selectedStatus;
+		  Status selectedStatus = null;
 		  connection = DriverManager.getConnection(url + dbName, user, password);
 		  Statement statement = connection.createStatement();
 		  String sql = "select * from StatusTable where " + 
 		    "id=" + id;
 		  ResultSet result = statement.executeQuery(sql);
-		  while(result.next())
+		  while(selectedStatus==null && result.next())
 		  {
 			  DefectStatus defectStatus = Enum.valueOf(DefectStatus.class,result.getString("text"));		 
 			  selectedStatus = new Status(id, defectStatus);
-			  return selectedStatus;
 		  }
-		  connection.close();
-		  return null;
 		  
-	  }catch(SQLException e)
-	  {
+		  connection.close();
+		  return selectedStatus;
+		  
+	  }catch(SQLException e) {
 		  e.printStackTrace();
 		  return null;
 	  }
@@ -324,8 +332,8 @@ public class DataBaseHelper implements IDatabaseCommunications {
 		  int assigneeId = result.getInt("assignee_id");
 		  int statusId = result.getInt("status_id");
 		  DefectPriority priority = DefectPriority.values()[result.getInt("priority")];
-		  Person submitter = getPerson(reporterId);
-		  Person assignee = getPerson(assigneeId);
+		  Person submitter = getUser(reporterId);
+		  Person assignee = getUser(assigneeId);
 		  Status status = getStatus(statusId);
 		  //Defect currentDefect = new Defect(date, id, reporter, summary, details, assignee, status, priority);
 		  
@@ -342,25 +350,64 @@ public class DataBaseHelper implements IDatabaseCommunications {
 	  }
   }
 
-@Override
-public ArrayList<Defect> getAllDefects() {
-	// TODO Auto-generated method stub
-	return null;
-}
-
-@Override
-public Defect getDefect(Integer defectId) {
-	// TODO Auto-generated method stub
-	return null;
-}
-
-@Override
-public void saveDefect(Defect defect) {
-	// TODO Auto-generated method stub
+	@Override
+	public Defect getDefect(Integer defectId) {
+		  try
+		  {
+			  Defect defect = null;
+			  connection = DriverManager.getConnection(url + dbName, user, password);
+			  Statement statement = connection.createStatement();
+			  String sql = "select * from DefectTable where " + 
+			    "id=" + defectId;
+			  ResultSet result = statement.executeQuery(sql);
+			  while(defect==null && result.next())
+			  {
+			      Date date =  result.getDate("date");
+			      int id = result.getInt("id");
+			      int reporterId = result.getInt("reporter_id");     
+			      String summary = result.getString("summary");
+				  String description = result.getString("description");
+				  int assigneeId = result.getInt("assignee_id");
+				  int statusId = result.getInt("status_id");
+				  DefectPriority priority = DefectPriority.values()[result.getInt("priority")];
+				  Person submitter = getUser(reporterId);
+				  Person assignee = getUser(assigneeId);
+				  Status status = getStatus(statusId);
+				  
+				  defect = new Defect(id, date, submitter, assignee, priority, status, summary, description);
+			  }
+			  
+			  connection.close();
+			  return defect;
+		  }catch(SQLException e)
+		  {
+			  e.printStackTrace();
+			  return null;
+		  }
+	}
 	
-}
+	@Override
+	public void saveDefect(Defect defect) {
+		  try
+		  {
+			  connection = DriverManager.getConnection(url + dbName, user, password);
+			  Statement statement = connection.createStatement();
+			  String sql = "insert into DefectTable (reporter_id, summary, details, assignee_id, status_id, priority) " + 
+			            "values (" +
+		                defect.getSubmitter().getId() + ","  +
+		                "'" + defect.getSummary()    + "'," +
+		                "'" + defect.getDescription()    + "'," +
+		                defect.getAssignee().getId() + ","  +
+		                defect.getStatus().getId()  + ","  +
+		                defect.getPriority().ordinal()  + ")";
+			  int result = statement.executeUpdate(sql);
+			  connection.close();
+		  }catch(SQLException e)
+		  {
+			  e.printStackTrace();
+		  }
+		
+	}
   
 
-  
- 
 }

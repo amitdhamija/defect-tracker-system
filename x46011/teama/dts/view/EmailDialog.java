@@ -38,7 +38,7 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
 	private ArrayList<Person> recipients = new ArrayList<Person>();
 	private Hashtable<String, String> emails = new Hashtable<String, String>();
 	private JOptionPane optionPane;
-    private JComboBox<String> recipientComboBox;
+    private JComboBox recipientComboBox;
     
     private String btnSendString = Constants.SEND_EMAIL;
     private String btnCancelString = Constants.CANCEL;
@@ -71,7 +71,7 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
 			emails.put(recipient.getName(), recipient.getEmail());
 		}
 
-		recipientComboBox = new JComboBox<>(names);
+		recipientComboBox = new JComboBox(names);
 		email = emails.get(names[0]);
 		
 		display();
