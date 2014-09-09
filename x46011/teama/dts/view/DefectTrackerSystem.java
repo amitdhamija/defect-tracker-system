@@ -36,15 +36,17 @@ import x46011.teama.dts.model.Status;
  * 					Amit Dhamija: Added event listeners for table selection and buttons
  * @revision 1.2	Amit Dhamija: Added code to get Defect data from selected table row and pass it to ModifyAssignDialog
  * 					Amit Dhamija: Added code to use Dimension object and get frame size from Constants class
+ * @revision 1.3	Amit Dhamija: Made changes to the placement of code for UI
+ * @revision 1.4	Amit Dhamija: Added instance of the manager class
  */
 public class DefectTrackerSystem {
 
 	private static DefectTrackerSystem dts;
+	private Defect defect;
+	
 	private JFrame frame;
 	private JTable tableDefectList;
 	private JTextArea textAreaDescription;
-	
-	private Defect defect;
     
     private ArrayList<Defect> defectList = new ArrayList<Defect>();
     
@@ -54,6 +56,7 @@ public class DefectTrackerSystem {
 	public DefectTrackerSystem() {
 		
 		// TODO: Remove test data
+		// TODO: Check for null Defect data; report back to user; exit app?
 		Person person1 = new Person(1, "Amit", "Dhamija", "amit@gmail.com");
 		Person person2 = new Person(2, "Tavis", "Cribbet", "travis@gmail.com");
 		Person person3 = new Person(3, "Kevin", "Alexander", "kevin@gmail.com");
@@ -167,9 +170,12 @@ public class DefectTrackerSystem {
 
         Container pane = frame.getContentPane();
         GroupLayout layout = new GroupLayout(pane);
+        
         pane.setLayout(layout);
+        
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
+        
         layout.setHorizontalGroup(
             layout.createParallelGroup()
             .addComponent(scrollPaneDefectList)
@@ -192,7 +198,7 @@ public class DefectTrackerSystem {
         frame.setVisible(true);
         
         // TODO: Worker thread?
-        // TODO: Move this for post-data received; also check if table contains any data
+        // TODO: Move this in a post-data received method; also check if table contains any data
         tableDefectList.changeSelection(0, 0, false, false);
         buttonModifyAssignDefect.setEnabled(true);
         buttonEmailStatus.setEnabled(true);
@@ -208,6 +214,7 @@ public class DefectTrackerSystem {
 	
 	private void onModifyAssignButtonClicked(int row) {
 		defect = defectList.get(row);
+		DefectDialog defectDialog = new DefectDialog(frame, defect, Constants.ACTION_MODIFY_ASSIGN_DEFECT);
 	}
 
 	private void onEmailStatusButtonClicked(int row) {
