@@ -6,6 +6,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import x46011.teama.dts.model.Constants;
@@ -30,6 +32,7 @@ import java.beans.PropertyChangeListener;
  * 
  * @author Amit Dhamija
  * @version 1.0
+ * @revision 1.1	Amit Dhamija: added the components to the layout
  */
 class DefectDialog extends JDialog implements ActionListener, PropertyChangeListener, ItemListener {
     
@@ -38,14 +41,14 @@ class DefectDialog extends JDialog implements ActionListener, PropertyChangeList
 	private Defect defect;
 	private JOptionPane optionPane;
     
-    private JTextField textFieldDefectId = new JTextField();
-    private JTextField textFieldDefectDate = new JTextField();
-    private JTextField textFieldDefectSummary = new JTextField();
-    private JComboBox comboBoxDefectPriority = new JComboBox();
-    private JComboBox comboBoxDefectStatus = new JComboBox();
-    private JComboBox comboBoxDefectSubmitter = new JComboBox();
-    private JComboBox comboBoxDefectOwner = new JComboBox();
-    private JTextField textFieldDefectDescription = new JTextField();
+    private JTextField textFieldId = new JTextField(Constants.TEXTFIELD_COLUMNS);
+    private JTextField textFieldDate = new JTextField(Constants.TEXTFIELD_COLUMNS);
+    private JTextField textFieldSummary = new JTextField(Constants.TEXTFIELD_COLUMNS);
+    private JComboBox comboBoxPriority = new JComboBox();
+    private JComboBox comboBoxStatus = new JComboBox();
+    private JComboBox comboBoxSubmitter = new JComboBox();
+    private JComboBox comboBoxAssignee = new JComboBox();
+    private JTextArea textAreaDescription = new JTextArea();
     
     private String btnSaveString = Constants.SAVE;
     private String btnCancelString = Constants.CANCEL;
@@ -78,11 +81,11 @@ class DefectDialog extends JDialog implements ActionListener, PropertyChangeList
             }
         });
         
-        comboBoxDefectPriority.addItemListener(this);
-        comboBoxDefectStatus.addItemListener(this);
-        comboBoxDefectSubmitter.addItemListener(this);
-        comboBoxDefectOwner.addItemListener(this);
-        textFieldDefectDescription.addActionListener(this);
+        comboBoxPriority.addItemListener(this);
+        comboBoxStatus.addItemListener(this);
+        comboBoxSubmitter.addItemListener(this);
+        comboBoxAssignee.addItemListener(this);
+        //textAreaDescription.addActionListener(this);
         
         optionPane.addPropertyChangeListener(this);
         
@@ -92,17 +95,20 @@ class DefectDialog extends JDialog implements ActionListener, PropertyChangeList
     }
     
     public void createDialogUI() {
-        JLabel labelDefectId = new JLabel(Constants.LABEL_DEFECT_ID);
-        JLabel labelDefectDate = new JLabel(Constants.LABEL_DEFECT_DATE);
-        JLabel labelDefectSummary = new JLabel(Constants.LABEL_DEFECT_SUMMARY);
-        JLabel labelDefectPriority = new JLabel(Constants.LABEL_DEFECT_PRIORITY);
-        JLabel labelDefectStatus = new JLabel(Constants.LABEL_DEFECT_STATUS);
-        JLabel labelDefectSubmitter = new JLabel(Constants.LABEL_DEFECT_SUBMITTER);
-        JLabel labelDefectAssignee = new JLabel(Constants.LABEL_DEFECT_ASSIGNEE);
-        JLabel labelDefectDescription = new JLabel(Constants.LABEL_DEFECT_DESCRIPTION);
+        JLabel labelId = new JLabel(Constants.LABEL_DEFECT_ID);
+        JLabel labelDate = new JLabel(Constants.LABEL_DEFECT_DATE);
+        JLabel labelSummary = new JLabel(Constants.LABEL_DEFECT_SUMMARY);
+        JLabel labelPriority = new JLabel(Constants.LABEL_DEFECT_PRIORITY);
+        JLabel labelStatus = new JLabel(Constants.LABEL_DEFECT_STATUS);
+        JLabel labelSubmitter = new JLabel(Constants.LABEL_DEFECT_SUBMITTER);
+        JLabel labelAssignee = new JLabel(Constants.LABEL_DEFECT_ASSIGNEE);
+        JLabel labelDescription = new JLabel(Constants.LABEL_DEFECT_DESCRIPTION);
+        JScrollPane scrollPaneDescription = new JScrollPane();
         
-        //comboBox, textField initialize, setText, size code goes here; 
-        
+        //comboBox, textField initialize, setText, size code goes here;
+        scrollPaneDescription.setViewportView(textAreaDescription);
+        textAreaDescription.setColumns(Constants.TEXTAREA_COLUMNS);
+        textAreaDescription.setRows(Constants.TEXTAREA_ROWS);
         
         JPanel panel = new JPanel();
         GroupLayout layout = new GroupLayout(panel);
@@ -120,34 +126,49 @@ class DefectDialog extends JDialog implements ActionListener, PropertyChangeList
         layout.setHorizontalGroup(
         		layout.createSequentialGroup()
         		.addGroup(layout.createParallelGroup()
-        				.addComponent(labelDefectId)
-        				.addComponent(labelDefectSummary)
-        				.addComponent(labelDefectPriority)
-        				.addComponent(labelDefectSubmitter)
-        				.addComponent(labelDefectDescription))
+        				.addComponent(labelId)
+        				.addComponent(labelDate)
+        				.addComponent(labelSummary)
+        				.addComponent(labelPriority)
+        				.addComponent(labelStatus)
+        				.addComponent(labelSubmitter)
+        				.addComponent(labelAssignee)
+        				.addComponent(labelDescription))
         				.addGroup(layout.createParallelGroup()
-        						.addComponent(textFieldDefectId)
-        						.addComponent(textFieldDefectSummary)
-        						.addComponent(comboBoxDefectPriority)
-        						.addComponent(comboBoxDefectSubmitter)
-        						.addComponent(textFieldDefectDescription)));
+        						.addComponent(textFieldId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        						.addComponent(textFieldDate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        						.addComponent(textFieldSummary)
+        						.addComponent(comboBoxPriority, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        						.addComponent(comboBoxStatus, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        						.addComponent(comboBoxSubmitter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        						.addComponent(comboBoxAssignee, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        						.addComponent(scrollPaneDescription)));
         layout.setVerticalGroup(
         		layout.createSequentialGroup()
         		.addGroup(layout.createParallelGroup()
-        				.addComponent(labelDefectId)
-        				.addComponent(textFieldDefectId))
+        				.addComponent(labelId)
+        				.addComponent(textFieldId))
         				.addGroup(layout.createParallelGroup()
-        						.addComponent(labelDefectSummary)
-        						.addComponent(textFieldDefectSummary))
+        						.addComponent(labelDate)
+                				.addComponent(textFieldDate))
+                		.addGroup(layout.createParallelGroup()
+                				.addComponent(labelSummary)
+        						.addComponent(textFieldSummary))
         				.addGroup(layout.createParallelGroup()
-        						.addComponent(labelDefectPriority)
-        						.addComponent(comboBoxDefectPriority))
-        						.addGroup(layout.createParallelGroup()
-                						.addComponent(labelDefectSubmitter)
-                						.addComponent(comboBoxDefectSubmitter))
-                						.addGroup(layout.createParallelGroup()
-                								.addComponent(labelDefectDescription)
-                								.addComponent(textFieldDefectDescription)));
+        						.addComponent(labelPriority)
+        						.addComponent(comboBoxPriority))
+        				.addGroup(layout.createParallelGroup()
+        						.addComponent(labelStatus)
+        						.addComponent(comboBoxStatus))
+        				.addGroup(layout.createParallelGroup()
+                				.addComponent(labelSubmitter)
+                				.addComponent(comboBoxSubmitter))
+                		.addGroup(layout.createParallelGroup()
+                				.addComponent(labelAssignee)
+                				.addComponent(comboBoxAssignee))
+                		.addGroup(layout.createParallelGroup()
+                				.addComponent(labelDescription)
+                				.addComponent(scrollPaneDescription)));
         
         // Create the JOptionPane.
         optionPane = new JOptionPane(array,

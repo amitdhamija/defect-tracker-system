@@ -9,6 +9,7 @@ import javax.swing.table.AbstractTableModel;
  * 
  * @author Amit Dhamija
  * @version 1.0
+ * @revision 1.1	Amit Dhamija: Added condition to display <NO DATA> if the Defect list is empty.
  */
 public class DefectTableModel extends AbstractTableModel {
 	
@@ -19,15 +20,23 @@ public class DefectTableModel extends AbstractTableModel {
 	public DefectTableModel(ArrayList<Defect> defectList) {
 		super();
 		
-		rowData = new Object[defectList.size()][];
-		
-		for (int i = 0; i < rowData.length; i++) {
-			rowData[i] = setRowData(defectList.get(i));
+		if(defectList.size() > 0) {
+			rowData = new Object[defectList.size()][];
+			
+			for (int i = 0; i < rowData.length; i++) {
+				rowData[i] = setRowData(defectList.get(i));
+			}
 		}
+		else {
+			rowData = new Object[1][];
+			Object[] data = {0000, "<NO DATA>", "<NO DATA>", "<NO DATA>", "<NO DATA>", "<NO DATA>", "<NO DATA>"};
+			rowData[0] = data;
+		}
+		
 	}
 	
 	private Object[] setRowData(Defect defect) {
-		Object[] rowData = {defect.getId(), defect.getDate(), defect.getSubmitter().getName(), defect.getAssignee().getName(), defect.getPriority(), defect.getStatus(), defect.getSummary()};
+		Object[] rowData = {defect.getId(), defect.getDate(), defect.getSubmitter().getName(), defect.getAssignee().getName(), defect.getPriority(), defect.getStatus().getStatus(), defect.getSummary()};
 		return rowData;
 	}
 	

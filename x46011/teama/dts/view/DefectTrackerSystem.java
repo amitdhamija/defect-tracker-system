@@ -18,6 +18,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import x46011.teama.dts.controller.DTSCommManager;
 import x46011.teama.dts.model.Constants;
 import x46011.teama.dts.model.Defect;
 import x46011.teama.dts.model.DefectPriority;
@@ -43,6 +44,7 @@ public class DefectTrackerSystem {
 
 	private static DefectTrackerSystem dts;
 	private Defect defect;
+	private DTSCommManager manager;
 	
 	private JFrame frame;
 	private JTable tableDefectList;
@@ -72,12 +74,14 @@ public class DefectTrackerSystem {
 		Defect defect4 = new Defect(1, date1,person4, person3, DefectPriority.LOW, status2, "Summary4", "Description4");
 		Defect defect5 = new Defect(1, date1,person5, person1, DefectPriority.LOW, status2, "Summary5", "Description5");
 		
-		defectList.add(defect1);
-		defectList.add(defect2);
-		defectList.add(defect3);
-		defectList.add(defect4);
-		defectList.add(defect5);
+		//defectList.add(defect1);
+		//defectList.add(defect2);
+		//defectList.add(defect3);
+		//defectList.add(defect4);
+		//defectList.add(defect5);
 		//
+		
+		manager = new DTSCommManager();
 	}
 		
 	/**
@@ -87,9 +91,17 @@ public class DefectTrackerSystem {
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 		    public void run() {
-		    	getSingleInstance().display();
+		    	getSingleInstance().createAndShowUI();
 		    }
 		});
+	}
+	
+	/**
+	 * Get the manager instance
+	 * @return the manager
+	 */
+	public static DTSCommManager getManager() {
+		return getSingleInstance().manager;
 	}
 	
 	/**
@@ -101,7 +113,7 @@ public class DefectTrackerSystem {
         return dts;
     }
 	
-	public void display() {
+	public void createAndShowUI() {
 		frame = new JFrame();
 		frame.setTitle(Constants.DTS_TITLE);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -110,11 +122,11 @@ public class DefectTrackerSystem {
 		DefectTableModel defectTableModel = new DefectTableModel(defectList);
 		tableDefectList = new JTable();
         tableDefectList.setModel(defectTableModel);
-        tableDefectList.getColumnModel().getColumn(0).setPreferredWidth(50);
+		tableDefectList.getColumnModel().getColumn(0).setPreferredWidth(50);
         tableDefectList.getColumnModel().getColumn(1).setPreferredWidth(50);
         tableDefectList.getColumnModel().getColumn(2).setPreferredWidth(100);
         tableDefectList.getColumnModel().getColumn(3).setPreferredWidth(100);
-        tableDefectList.getColumnModel().getColumn(4).setPreferredWidth(25);
+        tableDefectList.getColumnModel().getColumn(4).setPreferredWidth(50);
         tableDefectList.getColumnModel().getColumn(5).setPreferredWidth(50);
         tableDefectList.getColumnModel().getColumn(6).setPreferredWidth(225);
         tableDefectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -135,8 +147,9 @@ public class DefectTrackerSystem {
         labelDescription.setText(Constants.LABEL_DEFECT_DESCRIPTION);
         
         textAreaDescription = new JTextArea();
-        textAreaDescription.setColumns(20);
-        textAreaDescription.setRows(5);
+        textAreaDescription.setColumns(Constants.TEXTAREA_COLUMNS);
+        textAreaDescription.setRows(Constants.TEXTAREA_ROWS);
+        textAreaDescription.setEditable(false);
         
         JScrollPane scrollPaneDescription = new JScrollPane();
         scrollPaneDescription.setViewportView(textAreaDescription);
@@ -151,6 +164,7 @@ public class DefectTrackerSystem {
         });
 
         JButton buttonModifyAssignDefect = new JButton();
+        buttonModifyAssignDefect.setEnabled(false);
         buttonModifyAssignDefect.setText(Constants.MODIFY_ASSIGN_DEFECT);
         buttonModifyAssignDefect.addActionListener(new java.awt.event.ActionListener() {
         	@Override
@@ -160,6 +174,7 @@ public class DefectTrackerSystem {
         });
 
         JButton buttonEmailStatus = new JButton();
+        buttonEmailStatus.setEnabled(false);
         buttonEmailStatus.setText(Constants.EMAIL_STATUS);
         buttonEmailStatus.addActionListener(new java.awt.event.ActionListener() {
         	@Override
@@ -199,9 +214,14 @@ public class DefectTrackerSystem {
         
         // TODO: Worker thread?
         // TODO: Move this in a post-data received method; also check if table contains any data
-        tableDefectList.changeSelection(0, 0, false, false);
-        buttonModifyAssignDefect.setEnabled(true);
-        buttonEmailStatus.setEnabled(true);
+        defectList.clear();
+        //defectList.addAll(manager.getAllDefects());
+        
+        if(defectList.size() > 0) {
+        	tableDefectList.changeSelection(0, 0, false, false);
+            buttonModifyAssignDefect.setEnabled(true);
+            buttonEmailStatus.setEnabled(true);
+        }
 	}
 	
 	private void onRowSelected(int row) {
@@ -210,6 +230,7 @@ public class DefectTrackerSystem {
 	}
 	
 	private void onAddDefectButtonClicked() {
+		DefectDialog defectDialog = new DefectDialog(frame, null, Constants.ACTION_ADD_DEFECT);
 	}
 	
 	private void onModifyAssignButtonClicked(int row) {

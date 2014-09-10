@@ -17,7 +17,11 @@ public final class Constants {
 	public static final int EMAIL_DIALOG_SIZE_HEIGHT = 200;
 	
 	public static final int DEFECT_DIALOG_SIZE_WIDTH = 450;
-	public static final int DEFECT_DIALOG_SIZE_HEIGHT = 300;
+	public static final int DEFECT_DIALOG_SIZE_HEIGHT = 400;
+	
+	public static final int TEXTFIELD_COLUMNS = 10;
+	public static final int TEXTAREA_COLUMNS = 20;
+	public static final int TEXTAREA_ROWS = 5;
 	
 	public static final int ACTION_ADD_DEFECT = 1;
 	public static final int ACTION_MODIFY_ASSIGN_DEFECT = 2;

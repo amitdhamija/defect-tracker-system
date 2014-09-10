@@ -132,7 +132,7 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
         						.addComponent(labelDefectIdValue)
         						.addComponent(labelDefectSummaryValue)
         						.addComponent(labelDefectStatusValue)
-        						.addComponent(recipientComboBox)));
+        						.addComponent(recipientComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
         layout.setVerticalGroup(
         		layout.createSequentialGroup()
         		.addGroup(layout.createParallelGroup()
