@@ -3,6 +3,7 @@ package x46011.teama.dts.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import x46011.teama.dts.db.DatabaseCommunicator;
 import x46011.teama.dts.db.IDatabaseCommunications;
 import x46011.teama.dts.model.Defect;
 import x46011.teama.dts.model.Person;
@@ -14,6 +15,7 @@ import x46011.teama.dts.model.Person;
  * @version 1.0
  * @revision 1.1	Kevin Alexander: Removed unneccesary functions
  * @revision 1.2	Kevin Alexander: Renamed class to match its new limited role
+ * @revision 1.3	Kevin Alexander: Added instantiation of DatabaseCommunicator which went missing after a refactoring pass
  */
 public class DTSCommManager implements IDTSCommManager {
 
@@ -24,7 +26,9 @@ public class DTSCommManager implements IDTSCommManager {
 	 * Void constructor for DefectTrackingSystemManager class
 	 */
 	public DTSCommManager()
-	{}	
+	{
+		dbCommunicator = new DatabaseCommunicator();
+	}	
 	
 	public List<Person> getUsers() {
 		List<Person> allUsers = dbCommunicator.getUsersList();
