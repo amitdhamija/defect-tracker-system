@@ -13,6 +13,7 @@ import x46011.teama.dts.model.Person;
  * @version 1.0
  * @revision 1.1	Kevin Alexander: Removed unneccesary functions
  * @revision 1.2	Kevin Alexander: Renamed class to match its new limited role
+ * @revision 1.3	Kevin Alexander: Added emailUsers signature
  */
 public interface IDTSCommManager {
 	
@@ -24,5 +25,5 @@ public interface IDTSCommManager {
 	
 	public void saveDefect( Defect defect );
 		
-	public void emailUsers( ArrayList<String> emailAddresses );
+	public void emailUsers( Defect defect, ArrayList<String> emailAddresses );
 }
