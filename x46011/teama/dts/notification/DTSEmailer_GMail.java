@@ -1,4 +1,4 @@
-package x46011.teama.dts.controller;
+package x46011.teama.dts.notification;
 
 import java.security.Security;
 import java.util.Date;
@@ -11,6 +11,8 @@ import javax.mail.Session;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
+import x46011.teama.dts.controller.IDTSEmailer;
 
 import com.sun.mail.smtp.SMTPTransport;
 
