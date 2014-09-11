@@ -1,4 +1,4 @@
-package x46011.teama.dts.controller;
+package x46011.teama.dts.notification;
 
 import java.util.Set;
 

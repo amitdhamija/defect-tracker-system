@@ -12,7 +12,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import x46011.teama.dts.controller.IDTSEmailer;
 
 import com.sun.mail.smtp.SMTPTransport;
 
