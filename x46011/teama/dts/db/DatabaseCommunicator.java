@@ -28,25 +28,39 @@ import x46011.teama.dts.model.Status;
  * @revision 1.4	Kevin Alexander: Implemented getDefect 
  */
 public class DatabaseCommunicator implements IDatabaseCommunications {
-  private static final String dbName = "DefectTracker";
-  private static final String url = "jdbc:mysql://localhost/"; 
+  private static final String dbName = "defecttracker";
+  private static final String url = "jdbc:mysql://localhost:3306/"; 
   private static final String user = "root"; 
   private static final String password = "sql";
   private Connection connection;
   public DatabaseCommunicator()
   {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		}  catch (ClassNotFoundException cnfError) {
+			System.out.println("Failed to load appropriate driver for JDBC:" + cnfError);
+		}  catch (Exception error) {
+			System.out.println("An error occurred during program execution: " + error);
+		}
+		
 		CreateDataBase();
 		CreateUserTable();
 		CreateStatusTable();
 		CreateDefectTable();
-  }
+		
+ }
   
   public void CreateDataBase()
   {
     try {
-		connection = DriverManager.getConnection(url, user, password);
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (Exception error) {
+			System.out.println("An error occurred during program execution: " + error);
+		}
+		connection = DriverManager.getConnection(url,user,password);
 		Statement statement = connection.createStatement();
-		int result = statement.executeUpdate("create database if not exists " + dbName);
+		int result = statement.executeUpdate("CREATE DATABASE IF NOT EXISTS " + dbName);
 		connection.close();
 	} catch (SQLException e) {
 		// TODO Auto-generated catch block

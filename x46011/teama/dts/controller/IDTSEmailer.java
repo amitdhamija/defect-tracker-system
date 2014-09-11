@@ -3,7 +3,7 @@ package x46011.teama.dts.controller;
 import java.util.Set;
 
 /**
- * IDTSEmailer provides an interface for senders of defect notification emails
+ * IDTSEmailer provides an interface for senders of defect x46011.teama.dts.notification emails
  * 
  * @author Kevin Alexander
  * @version 1.0

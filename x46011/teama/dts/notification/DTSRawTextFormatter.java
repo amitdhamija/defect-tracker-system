@@ -1,11 +1,11 @@
-package notification;
+package x46011.teama.dts.notification;
 
 import x46011.teama.dts.model.Defect;
 import x46011.teama.dts.model.DefectPriority;
 import x46011.teama.dts.model.Status;
 
 /**
- * DTSRawTextFormatter formats defect notification emails into raw text
+ * DTSRawTextFormatter formats defect x46011.teama.dts.notification emails into raw text
  * 
  * @author Kevin Alexander
  * @version 1.0

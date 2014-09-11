@@ -5,12 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import notification.DTSRawTextFormatter;
 
 import x46011.teama.dts.db.DatabaseCommunicator;
 import x46011.teama.dts.db.IDatabaseCommunications;
 import x46011.teama.dts.model.Defect;
 import x46011.teama.dts.model.Person;
+import x46011.teama.dts.notification.DTSRawTextFormatter;
 
 /**
  * DTSCommManager handles interactions between the UI and the communications layer

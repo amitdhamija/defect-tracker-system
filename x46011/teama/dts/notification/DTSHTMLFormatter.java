@@ -1,9 +1,9 @@
-package notification;
+package x46011.teama.dts.notification;
 
 import x46011.teama.dts.model.Defect;
 
 /**
- * DTSHTMLFormatter formats defect notification emails into raw text
+ * DTSHTMLFormatter formats defect x46011.teama.dts.notification emails into raw text
  * 					(or would, if it weren't just a stub)
  * 
  * @author Kevin Alexander
