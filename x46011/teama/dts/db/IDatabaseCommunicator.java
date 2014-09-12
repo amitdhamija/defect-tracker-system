@@ -3,6 +3,8 @@ package x46011.teama.dts.db;
 import java.util.List;
 
 import x46011.teama.dts.model.Defect;
+import x46011.teama.dts.model.DefectPriority;
+import x46011.teama.dts.model.DefectStatus;
 import x46011.teama.dts.model.Person;
 import x46011.teama.dts.model.Status;
 
@@ -11,25 +13,20 @@ import x46011.teama.dts.model.Status;
  * IDTSCommManager provides an interface for DTSCommManager to enable modularity.
  * 
  * @author Travis Cribbet
+ * @author Amit Dhamija
+ * @author Kevin Alexander
  * @version 1.0
- * @revision 1.1	Kevin Alexander: Removed unneccesary functions
+ * @revision 1.1	Kevin Alexander: Removed unneccesary functions'
+ * @revision 1.2	Amit Dhamija: Removed unnecessary methods
  */
 public interface IDatabaseCommunicator {
        
-        public List<Defect> getDefectList();   
-        public void addDefect( Defect defect );
-        public Defect getDefect( Integer defectId );
-        public void saveDefect( Defect defect );
+        public List<Defect> getDefectList();
+        public List<Person> getUserList();
+        public List<DefectPriority> getPriorityList();
+        public List<DefectStatus> getStatusList();
         
         public void addUser(Person p);
-        public void deleteUser(Person p);
-        public Person getUser(int id);
-        
-        public Status getStatus(int id);
-        public void addStatus(Status status);
-        public void deleteStatus(Status status);
-        
-        public List<Status> getStatusList();      
-        public List<Person> getUsersList(); 
-        
+        public void addDefect( Defect defect );
+        public void saveDefect( Defect defect );
 }

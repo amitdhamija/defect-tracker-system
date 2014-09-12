@@ -4,7 +4,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -25,7 +24,6 @@ import x46011.teama.dts.model.DefectPriority;
 import x46011.teama.dts.model.DefectStatus;
 import x46011.teama.dts.model.DefectTableModel;
 import x46011.teama.dts.model.Person;
-import x46011.teama.dts.model.Status;
 
 /**
  * The DefectTrackerSystem class runs the main thread and allows the user to navigate the application.
@@ -39,6 +37,7 @@ import x46011.teama.dts.model.Status;
  * 					Amit Dhamija: Added code to use Dimension object and get frame size from Constants class
  * @revision 1.3	Amit Dhamija: Made changes to the placement of code for UI
  * @revision 1.4	Amit Dhamija: Added instance of the manager class
+ * @revision 1.5	Amit Dhamija: Added logic to enable Modify/Assign and Email Status buttons only when there is list of Defects available
  */
 public class DefectTrackerSystem {
 
@@ -56,30 +55,6 @@ public class DefectTrackerSystem {
 	 * Default constructor
 	 */
 	public DefectTrackerSystem() {
-		
-		// TODO: Remove test data
-		// TODO: Check for null Defect data; report back to user; exit app?
-		Person person1 = new Person(1, "Amit", "Dhamija", "amit@gmail.com");
-		Person person2 = new Person(2, "Tavis", "Cribbet", "travis@gmail.com");
-		Person person3 = new Person(3, "Kevin", "Alexander", "kevin@gmail.com");
-		Person person4 = new Person(4, "Thomas", "Hargrove", "thomas@gmail.com");
-		Person person5 = new Person(5, "Kesha", "Smith", "kesha@yahoo.com");
-		Status status1 = new Status(1, DefectStatus.OPEN);
-		Status status2 = new Status(1, DefectStatus.CLOSED);
-		Status status3 = new Status(1, DefectStatus.RESOLVED);
-		Date date1 = new Date();
-		Defect defect1 = new Defect(1, date1,person1, person4, DefectPriority.HIGH, status1, "Summary1", "Description1");
-		Defect defect2 = new Defect(1, date1,person2, person5, DefectPriority.MEDIUM, status3, "Summary2", "Description2");
-		Defect defect3 = new Defect(1, date1,person3, person2, DefectPriority.HIGH, status1, "Summary3", "Description3");
-		Defect defect4 = new Defect(1, date1,person4, person3, DefectPriority.LOW, status2, "Summary4", "Description4");
-		Defect defect5 = new Defect(1, date1,person5, person1, DefectPriority.LOW, status2, "Summary5", "Description5");
-		
-		//defectList.add(defect1);
-		//defectList.add(defect2);
-		//defectList.add(defect3);
-		//defectList.add(defect4);
-		//defectList.add(defect5);
-		//
 		
 		manager = new DTSCommManager();
 	}
@@ -119,18 +94,8 @@ public class DefectTrackerSystem {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(new Dimension(Constants.DTS_FRAME_SIZE_WIDTH, Constants.DTS_FRAME_SIZE_HEIGHT));
 		
-		DefectTableModel defectTableModel = new DefectTableModel(defectList);
 		tableDefectList = new JTable();
-        tableDefectList.setModel(defectTableModel);
-		tableDefectList.getColumnModel().getColumn(0).setPreferredWidth(50);
-        tableDefectList.getColumnModel().getColumn(1).setPreferredWidth(50);
-        tableDefectList.getColumnModel().getColumn(2).setPreferredWidth(100);
-        tableDefectList.getColumnModel().getColumn(3).setPreferredWidth(100);
-        tableDefectList.getColumnModel().getColumn(4).setPreferredWidth(50);
-        tableDefectList.getColumnModel().getColumn(5).setPreferredWidth(50);
-        tableDefectList.getColumnModel().getColumn(6).setPreferredWidth(225);
-        tableDefectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+		
         tableDefectList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent event) {
@@ -213,9 +178,18 @@ public class DefectTrackerSystem {
         frame.setVisible(true);
         
         // TODO: Worker thread?
-        // TODO: Move this in a post-data received method; also check if table contains any data
-        defectList.clear();
-        //defectList.addAll(manager.getAllDefects());
+        // TODO: Move this in a post-data received method
+        //defectList.addAll(manager.getDefects());
+        DefectTableModel defectTableModel = new DefectTableModel(defectList);
+        tableDefectList.setModel(defectTableModel);
+        tableDefectList.getColumnModel().getColumn(0).setPreferredWidth(50);
+        tableDefectList.getColumnModel().getColumn(1).setPreferredWidth(75);
+        tableDefectList.getColumnModel().getColumn(2).setPreferredWidth(100);
+        tableDefectList.getColumnModel().getColumn(3).setPreferredWidth(100);
+        tableDefectList.getColumnModel().getColumn(4).setPreferredWidth(50);
+        tableDefectList.getColumnModel().getColumn(5).setPreferredWidth(50);
+        tableDefectList.getColumnModel().getColumn(6).setPreferredWidth(250);
+        tableDefectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
         if(defectList.size() > 0) {
         	tableDefectList.changeSelection(0, 0, false, false);
