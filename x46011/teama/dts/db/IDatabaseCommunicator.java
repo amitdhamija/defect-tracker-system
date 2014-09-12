@@ -14,7 +14,7 @@ import x46011.teama.dts.model.Status;
  * @version 1.0
  * @revision 1.1	Kevin Alexander: Removed unneccesary functions
  */
-public interface IDatabaseCommunications {
+public interface IDatabaseCommunicator {
        
         public List<Defect> getDefectList();   
         public void addDefect( Defect defect );

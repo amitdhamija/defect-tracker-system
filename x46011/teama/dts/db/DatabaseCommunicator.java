@@ -27,7 +27,7 @@ import x46011.teama.dts.model.Status;
  * 									 that the connection is closed prior to function return
  * @revision 1.4	Kevin Alexander: Implemented getDefect 
  */
-public class DatabaseCommunicator implements IDatabaseCommunications {
+public class DatabaseCommunicator implements IDatabaseCommunicator {
   private static final String dbName = "defecttracker";
   private static final String url = "jdbc:mysql://localhost:3306/"; 
   private static final String user = "root"; 
