@@ -6,7 +6,6 @@ import x46011.teama.dts.model.Defect;
 import x46011.teama.dts.model.DefectPriority;
 import x46011.teama.dts.model.DefectStatus;
 import x46011.teama.dts.model.Person;
-import x46011.teama.dts.model.Status;
 
 
 /**

@@ -2,7 +2,7 @@ package x46011.teama.dts.notification;
 
 import x46011.teama.dts.model.Defect;
 import x46011.teama.dts.model.DefectPriority;
-import x46011.teama.dts.model.Status;
+import x46011.teama.dts.model.DefectStatus;
 
 /**
  * DTSRawTextFormatter formats defect x46011.teama.dts.notification emails into raw text
@@ -22,7 +22,7 @@ public class DTSRawTextFormatter implements IDTSEmailFormatter
 		String assignee = defect.getAssignee().getName();
 		String reporter = defect.getSubmitter().getName();
 		DefectPriority priority = defect.getPriority();
-		Status status = defect.getStatus();
+		DefectStatus status = defect.getStatus();
 		java.util.Date reportedDate = defect.getDate();
 		
 		String message = "Information about bug # " + id + " has changed.\n\tPlease review the new information.\n";
