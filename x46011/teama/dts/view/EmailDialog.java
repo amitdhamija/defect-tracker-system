@@ -51,11 +51,11 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
         this.defect = defect;
         
         // TODO: Remove test data; use getUsers() from manager
-        Person person1 = new Person(1, "Amit", "Dhamija", "amit@gmail.com");
-		Person person2 = new Person(2, "Tavis", "Cribbet", "travis@gmail.com");
-		Person person3 = new Person(3, "Kevin", "Alexander", "kevin@gmail.com");
-		Person person4 = new Person(4, "Thomas", "Hargrove", "thomas@gmail.com");
-		Person person5 = new Person(5, "Kesha", "Smith", "kesha@yahoo.com");
+        Person person1 = new Person("Amit", "Dhamija", "amit@gmail.com");
+		Person person2 = new Person("Tavis", "Cribbet", "travis@gmail.com");
+		Person person3 = new Person("Kevin", "Alexander", "kevin@gmail.com");
+		Person person4 = new Person("Thomas", "Hargrove", "thomas@gmail.com");
+		Person person5 = new Person("Kesha", "Smith", "kesha@yahoo.com");
 		recipients.add(person1);
 		recipients.add(person2);
 		recipients.add(person3);
@@ -106,7 +106,7 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
         // TODO: assume defect is not null; do check? and not set value here?
         JLabel labelDefectIdValue = new JLabel(String.valueOf(defect.getId()));
         JLabel labelDefectSummaryValue = new JLabel(defect.getSummary());
-        JLabel labelDefectStatusValue = new JLabel(defect.getStatus().getStatus().toString());
+        JLabel labelDefectStatusValue = new JLabel(defect.getStatus().name());
         
         JPanel panel = new JPanel();
         GroupLayout layout = new GroupLayout(panel);

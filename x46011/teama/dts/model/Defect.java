@@ -19,15 +19,13 @@ public class Defect {
 	private Person submitter;
 	private Person assignee;
 	private DefectPriority priority;
-	private Status status;
+	private DefectStatus status;
 	private String summary;
 	private String description;
 	
 	public Defect() {}
 	
-	public Defect(int id, Date date, Person submitter, Person assignee, DefectPriority priority, Status status, String summary, String description) {
-		this.id = id;
-		this.date = date;
+	public Defect(Person submitter, Person assignee, DefectPriority priority, DefectStatus status, String summary, String description) {
 		this.submitter = submitter;
 		this.assignee = assignee;
 		this.priority = priority;
@@ -76,11 +74,11 @@ public class Defect {
 		this.priority = priority;
 	}
 	
-	public Status getStatus() {
+	public DefectStatus getStatus() {
 		return status;
 	}
 	
-	public void setStatus(Status status) {
+	public void setStatus(DefectStatus status) {
 		this.status = status;
 	}
 	

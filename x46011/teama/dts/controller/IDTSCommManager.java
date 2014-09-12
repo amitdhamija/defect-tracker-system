@@ -17,7 +17,7 @@ import x46011.teama.dts.model.Person;
  */
 public interface IDTSCommManager {
 	
-	public List<Defect> getAllDefects();
+	public List<Defect> getDefects();
 	
 	public List<Person> getUsers();
 	

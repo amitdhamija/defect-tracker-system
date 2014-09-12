@@ -37,11 +37,11 @@ public class DTSCommManager implements IDTSCommManager {
 	}	
 	
 	public List<Person> getUsers() {
-		List<Person> allUsers = dbCommunicator.getUsersList();
+		List<Person> allUsers = dbCommunicator.getUserList();
 		return allUsers;
 	}
 	
-	public List<Defect> getAllDefects() {
+	public List<Defect> getDefects() {
 		List<Defect> allDefects = dbCommunicator.getDefectList();
 		return allDefects;
 	}

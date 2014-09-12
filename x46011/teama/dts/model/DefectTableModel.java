@@ -36,7 +36,7 @@ public class DefectTableModel extends AbstractTableModel {
 	}
 	
 	private Object[] setRowData(Defect defect) {
-		Object[] rowData = {defect.getId(), defect.getDate(), defect.getSubmitter().getName(), defect.getAssignee().getName(), defect.getPriority(), defect.getStatus().getStatus(), defect.getSummary()};
+		Object[] rowData = {defect.getId(), defect.getDate(), defect.getSubmitter().getName(), defect.getAssignee().getName(), defect.getPriority(), defect.getStatus(), defect.getSummary()};
 		return rowData;
 	}
 	

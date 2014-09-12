@@ -63,6 +63,8 @@ public final class Constants {
 	
 	public static final String CANCEL = "Cancel";
 	
-	public static final String DB_URL = "jdbc:mysql://localhost:3307/mysql";
+	public static final String DB_URL = "jdbc:mysql://localhost:3306/";
+	public static final String DB_NAME = "defecttracker";
 	public static final String DB_USER = "root";
+	public static final String DB_PASSWORD = "";
 }
