@@ -42,9 +42,7 @@ import x46011.teama.dts.model.Person;
 public class DefectTrackerSystem {
 
 	private static DefectTrackerSystem dts;
-	private Defect defect;
 	private DTSCommManager manager;
-	
 	private JFrame frame;
 	private JTable tableDefectList;
 	private JTextArea textAreaDescription;
@@ -58,7 +56,7 @@ public class DefectTrackerSystem {
 		
 		manager = new DTSCommManager();
 	}
-		
+	
 	/**
 	 * Main method
 	 * @param args
@@ -87,6 +85,14 @@ public class DefectTrackerSystem {
             dts = new DefectTrackerSystem();
         return dts;
     }
+	
+	public void updateTable() {
+		defectList.clear();
+		defectList.addAll(manager.getDefects());
+        DefectTableModel defectTableModel = new DefectTableModel(defectList);
+        tableDefectList.setModel(defectTableModel);
+        //tableDefectList.changeSelection(0, 0, false, false);
+	}
 	
 	public void createAndShowUI() {
 		frame = new JFrame();
@@ -179,9 +185,9 @@ public class DefectTrackerSystem {
         
         // TODO: Worker thread?
         // TODO: Move this in a post-data received method
-        defectList.addAll(manager.getDefects());
-        DefectTableModel defectTableModel = new DefectTableModel(defectList);
-        tableDefectList.setModel(defectTableModel);
+        
+        updateTable();
+        
         tableDefectList.getColumnModel().getColumn(0).setPreferredWidth(50);
         tableDefectList.getColumnModel().getColumn(1).setPreferredWidth(75);
         tableDefectList.getColumnModel().getColumn(2).setPreferredWidth(100);
@@ -199,8 +205,7 @@ public class DefectTrackerSystem {
 	}
 	
 	private void onRowSelected(int row) {
-		defect = defectList.get(row);
-		textAreaDescription.setText(defect.getDescription());
+		//textAreaDescription.setText(defectList.get(row).getDescription());
 	}
 	
 	private void onAddDefectButtonClicked() {
@@ -208,12 +213,10 @@ public class DefectTrackerSystem {
 	}
 	
 	private void onModifyAssignButtonClicked(int row) {
-		defect = defectList.get(row);
-		DefectDialog defectDialog = new DefectDialog(frame, defect, Constants.ACTION_MODIFY_ASSIGN_DEFECT);
+		DefectDialog defectDialog = new DefectDialog(frame, defectList.get(row), Constants.ACTION_MODIFY_ASSIGN_DEFECT);
 	}
 
 	private void onEmailStatusButtonClicked(int row) {
-		defect = defectList.get(row);
-		EmailDialog emailDialog = new EmailDialog(frame, defect);
+		EmailDialog emailDialog = new EmailDialog(frame, defectList.get(row));
 	}
 }
