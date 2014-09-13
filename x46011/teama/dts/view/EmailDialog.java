@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import x46011.teama.dts.controller.DTSCommManager;
 import x46011.teama.dts.model.Constants;
 import x46011.teama.dts.model.Defect;
 import x46011.teama.dts.model.Person;
@@ -35,6 +36,7 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
     
 	private static final long serialVersionUID = 1L;
 	
+	private DTSCommManager manager;
 	private Defect defect;
 	private ArrayList<Person> recipients = new ArrayList<Person>();
 	private Hashtable<String, String> emails = new Hashtable<String, String>();
@@ -51,17 +53,10 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
         this.defect = defect;
         
         // TODO: Remove test data; use getUsers() from manager
-        Person person1 = new Person("Amit", "Dhamija", "amit@gmail.com");
-		Person person2 = new Person("Tavis", "Cribbet", "travis@gmail.com");
-		Person person3 = new Person("Kevin", "Alexander", "kevin@gmail.com");
-		Person person4 = new Person("Thomas", "Hargrove", "thomas@gmail.com");
-		Person person5 = new Person("Kesha", "Smith", "kesha@yahoo.com");
-		recipients.add(person1);
-		recipients.add(person2);
-		recipients.add(person3);
-		recipients.add(person4);
-		recipients.add(person5);
-        //
+        manager = new DTSCommManager();
+        recipients.clear();
+        recipients.addAll(manager.getUsers());
+
 		setTitle(Constants.EMAIL_STATUS);
         setPreferredSize(new Dimension(Constants.EMAIL_DIALOG_SIZE_WIDTH, Constants.EMAIL_DIALOG_SIZE_HEIGHT));
         setResizable(false);
@@ -100,8 +95,10 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
 			emails.put(recipient.getName(), recipient.getEmail());
 		}
 		
-    	recipientComboBox = new JComboBox(names);
-		email = emails.get(names[0]);
+    	String assigneeName = defect.getAssignee().getName();
+		email = emails.get(assigneeName);
+		recipientComboBox = new JComboBox(names);
+		recipientComboBox.setSelectedItem(assigneeName);
 		
         // TODO: assume defect is not null; do check? and not set value here?
         JLabel labelDefectIdValue = new JLabel(String.valueOf(defect.getId()));
@@ -196,12 +193,18 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
                     JOptionPane.UNINITIALIZED_VALUE);
  
             if (btnSendString.equals(value)) {
-            	// TODO: send email
-            	System.out.println("Email: " + email);
+            	sendEmail();
             	clearAndHide();
             } else { // user closed dialog or clicked cancel
                 clearAndHide();
             }
         }
+    }
+    
+    private void sendEmail()
+    {
+    	ArrayList<String> emailAddresses = new ArrayList<String>();
+    	emailAddresses.add(email);
+    	manager.emailUsers(defect, emailAddresses);
     }
 }
