@@ -20,19 +20,19 @@ public class DTSRawTextFormatter implements IDTSEmailFormatter
 		String summary = defect.getSummary();
 		String description = defect.getDescription();
 		String assignee = defect.getAssignee().getName();
-		String reporter = defect.getSubmitter().getName();
+		String submitter = defect.getSubmitter().getName();
 		DefectPriority priority = defect.getPriority();
 		DefectStatus status = defect.getStatus();
-		java.util.Date reportedDate = defect.getDate();
+		java.util.Date submittedDate = defect.getDate();
 		
-		String message = "Information about bug # " + id + " has changed.\n\tPlease review the new information.\n";
+		String message = "Information about Defect # " + id + " has changed.\nPlease review the new information.\n";
 		message += "\nSummary: " + summary + "\n";
-		message += "\nReported on: " + reportedDate.toString();
+		message += "\nSubmitted on: " + submittedDate.toString();
+		message += "\nSubmitter: " + submitter;
 		message += "\nAssignee: " + assignee;
-		message += "\nReporter: " + reporter;
 		message += "\nPriority: " + priority.toString() + "\t\tStatus: " + status.toString();
-		message += "\nReporter: " + reporter;
-		message += "\n\nDetails: " + description;
+		message += "\nSubmitter: " + submitter;
+		message += "\n\nDescription: " + description;
 		
 		return message;
 	}
@@ -40,10 +40,10 @@ public class DTSRawTextFormatter implements IDTSEmailFormatter
 	@Override
 	public String formatEmail(Defect oldDefect,Defect newDefect) {
 		
-		String message = "Information about bug # " + oldDefect.getId() + " has changed.\n\tPlease review the new information.\n";
+		String message = "Information about Defect # " + oldDefect.getId() + " has changed.\nPlease review the new information.\n";
 		message += "\nSummary: " + oldDefect.getSummary() + "\n";
-		message += "\nReported on: " + oldDefect.getDate().toString();
-		message += "\nReporter: " + oldDefect.getSubmitter();
+		message += "\nSubmitted on: " + oldDefect.getDate().toString();
+		message += "\nSubmitter: " + oldDefect.getSubmitter();
 
 		if (oldDefect.getAssignee().getId()!=newDefect.getAssignee().getId())
 			message += "\n\nPrevious Assignee: " + oldDefect.getAssignee().getName() + "\t\tNew Assignee: " + newDefect.getAssignee().getName();
@@ -52,7 +52,7 @@ public class DTSRawTextFormatter implements IDTSEmailFormatter
 		if (oldDefect.getStatus()!=newDefect.getStatus())
 			message += "\n\nPrevious Status: " + oldDefect.getStatus() + "\t\tNew Status: " + newDefect.getStatus();
 		if (oldDefect.getDescription()!=newDefect.getDescription())
-			message += "\n\nPrevious Details:\n\t" + oldDefect.getDescription() + "\n\nNew Details:\n\t" + newDefect.getDescription();
+			message += "\n\nPrevious Description:\n\t" + oldDefect.getDescription() + "\n\nNew Description:\n\t" + newDefect.getDescription();
 		
 		return message;
 	}
