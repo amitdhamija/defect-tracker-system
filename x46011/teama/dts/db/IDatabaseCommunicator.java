@@ -5,7 +5,7 @@ import java.util.List;
 import x46011.teama.dts.model.Defect;
 import x46011.teama.dts.model.DefectPriority;
 import x46011.teama.dts.model.DefectStatus;
-import x46011.teama.dts.model.Person;
+import x46011.teama.dts.model.User;
 
 
 /**
@@ -21,11 +21,11 @@ import x46011.teama.dts.model.Person;
 public interface IDatabaseCommunicator {
        
         public List<Defect> getDefectList();
-        public List<Person> getUserList();
+        public List<User> getUserList();
         public List<DefectPriority> getPriorityList();
         public List<DefectStatus> getStatusList();
         
-        public void addUser(Person p);
+        public void addUser(User p);
         public void addDefect( Defect defect );
         public void saveDefect( Defect defect );
 }

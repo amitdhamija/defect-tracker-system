@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 import x46011.teama.dts.controller.DTSCommManager;
 import x46011.teama.dts.model.Constants;
 import x46011.teama.dts.model.Defect;
-import x46011.teama.dts.model.Person;
+import x46011.teama.dts.model.User;
 
 /**
  * The EmailDialog class shows the Dialog to email Defect status to the recipient.
@@ -36,7 +36,7 @@ class EmailDialog extends JDialog implements PropertyChangeListener {
 	
 	private DTSCommManager manager;
 	private Defect defect;
-	private ArrayList<Person> recipients = new ArrayList<Person>();
+	private ArrayList<User> recipients = new ArrayList<User>();
 	private JOptionPane optionPane;
     private JComboBox comboBoxRecipient;
     
@@ -87,7 +87,7 @@ class EmailDialog extends JDialog implements PropertyChangeListener {
 		String[] names = new String[size];
 		
 		for(int i = 0; i < size; i++) {
-			Person recipient = recipients.get(i);
+			User recipient = recipients.get(i);
 			names[i] = recipient.getName();
 		}
 		

@@ -6,7 +6,7 @@ import java.util.List;
 import x46011.teama.dts.model.Defect;
 import x46011.teama.dts.model.DefectPriority;
 import x46011.teama.dts.model.DefectStatus;
-import x46011.teama.dts.model.Person;
+import x46011.teama.dts.model.User;
 
 /**
  * IDTSCommManager provides an interface to teh DTSCommManager to enable modularity.
@@ -23,7 +23,7 @@ public interface IDTSCommManager {
 	
 	public List<Defect> getDefects();
 	
-	public List<Person> getUsers();
+	public List<User> getUsers();
 	
 	public List<DefectPriority> getPriorities();
 	

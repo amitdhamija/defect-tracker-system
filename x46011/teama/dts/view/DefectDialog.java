@@ -23,7 +23,7 @@ import x46011.teama.dts.model.Constants;
 import x46011.teama.dts.model.Defect;
 import x46011.teama.dts.model.DefectPriority;
 import x46011.teama.dts.model.DefectStatus;
-import x46011.teama.dts.model.Person;
+import x46011.teama.dts.model.User;
 
 /**
  * The DefectDialog class shows the Dialog to modify and/or assign the Defect.
@@ -39,7 +39,7 @@ class DefectDialog extends JDialog implements PropertyChangeListener {
 	
 	private Defect defect;
 	private DTSCommManager manager;
-	private ArrayList<Person> users = new ArrayList<Person>();
+	private ArrayList<User> users = new ArrayList<User>();
 	private ArrayList<DefectPriority> priorities = new ArrayList<DefectPriority>();
 	private ArrayList<DefectStatus> statuses = new ArrayList<DefectStatus>();
 	private JOptionPane optionPane;
@@ -107,7 +107,7 @@ class DefectDialog extends JDialog implements PropertyChangeListener {
     	int size = users.size();
 		String[] names = new String[size];
 		for(int i = 0; i < size; i++) {
-			Person user = users.get(i);
+			User user = users.get(i);
 			names[i] = user.getName();
 		}
 		

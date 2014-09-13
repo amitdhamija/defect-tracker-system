@@ -13,7 +13,7 @@ import x46011.teama.dts.model.Constants;
 import x46011.teama.dts.model.Defect;
 import x46011.teama.dts.model.DefectPriority;
 import x46011.teama.dts.model.DefectStatus;
-import x46011.teama.dts.model.Person;
+import x46011.teama.dts.model.User;
 
 
 /**
@@ -233,7 +233,7 @@ public class DatabaseCommunicator implements IDatabaseCommunicator {
 		}
 	}
 	
-	private int getUserId(Person user) {
+	private int getUserId(User user) {
 		int id = 0;
 		try {
 			Statement statement = getConnection().createStatement();
@@ -252,8 +252,8 @@ public class DatabaseCommunicator implements IDatabaseCommunicator {
 		}
 	}
 	
-	private Person getUser(int id) {
-		Person user = null;
+	private User getUser(int id) {
+		User user = null;
 		try {
 			Statement statement = getConnection().createStatement();
 			String sql = "SELECT * FROM user WHERE id=" + id;
@@ -264,7 +264,7 @@ public class DatabaseCommunicator implements IDatabaseCommunicator {
 					String first = resultSet.getString("first");
 					String last = resultSet.getString("last");
 					String email = resultSet.getString("email");
-					user = new Person(first, last, email);
+					user = new User(first, last, email);
 					user.setId(id);
 				}
 			}
@@ -320,8 +320,8 @@ public class DatabaseCommunicator implements IDatabaseCommunicator {
 	}
 	
 	
-	public List<Person> getUserList() {
-		List<Person> userList = new ArrayList<Person>();
+	public List<User> getUserList() {
+		List<User> userList = new ArrayList<User>();
 		try {
 			Statement statement = getConnection().createStatement();
 			statement.executeUpdate("USE " + Constants.DB_NAME);
@@ -334,7 +334,7 @@ public class DatabaseCommunicator implements IDatabaseCommunicator {
 					String first = resultSet.getString("first");
 					String last = resultSet.getString("last");
 					String email = resultSet.getString("email");
-					Person user = new Person(first, last, email);
+					User user = new User(first, last, email);
 					user.setId(id);
 					userList.add(user);
 				}
@@ -381,7 +381,7 @@ public class DatabaseCommunicator implements IDatabaseCommunicator {
 		}
 	}
 	
-	public void addUser(Person user) {
+	public void addUser(User user) {
 		try {
 			Statement statement = getConnection().createStatement();
 			statement.executeUpdate("USE " + Constants.DB_NAME);

@@ -10,7 +10,7 @@ import x46011.teama.dts.db.IDatabaseCommunicator;
 import x46011.teama.dts.model.Defect;
 import x46011.teama.dts.model.DefectPriority;
 import x46011.teama.dts.model.DefectStatus;
-import x46011.teama.dts.model.Person;
+import x46011.teama.dts.model.User;
 import x46011.teama.dts.notification.DTSEmailer_GMail;
 import x46011.teama.dts.notification.DTSRawTextFormatter;
 
@@ -29,7 +29,7 @@ import x46011.teama.dts.notification.DTSRawTextFormatter;
 public class DTSCommManager implements IDTSCommManager {
 
 	IDatabaseCommunicator dbCommunicator;
-	Person currentUser;
+	User currentUser;
 	
 	/**
 	 * Void constructor for DefectTrackingSystemManager class
@@ -39,8 +39,8 @@ public class DTSCommManager implements IDTSCommManager {
 		dbCommunicator = new DatabaseCommunicator();
 	}	
 	
-	public List<Person> getUsers() {
-		List<Person> allUsers = dbCommunicator.getUserList();
+	public List<User> getUsers() {
+		List<User> allUsers = dbCommunicator.getUserList();
 		return allUsers;
 	}
 	

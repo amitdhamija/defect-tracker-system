@@ -16,8 +16,8 @@ public class Defect {
 	
 	private int id;
 	private Date date;
-	private Person submitter;
-	private Person assignee;
+	private User submitter;
+	private User assignee;
 	private DefectPriority priority;
 	private DefectStatus status;
 	private String summary;
@@ -25,7 +25,7 @@ public class Defect {
 	
 	public Defect() {}
 	
-	public Defect(Person submitter, Person assignee, DefectPriority priority, DefectStatus status, String summary, String description) {
+	public Defect(User submitter, User assignee, DefectPriority priority, DefectStatus status, String summary, String description) {
 		this.submitter = submitter;
 		this.assignee = assignee;
 		this.priority = priority;
@@ -50,19 +50,19 @@ public class Defect {
 		this.date = date;
 	}
 	
-	public Person getSubmitter() {
+	public User getSubmitter() {
 		return submitter;
 	}
 	
-	public void setSubmitter(Person submitter) {
+	public void setSubmitter(User submitter) {
 		this.submitter = submitter;
 	}
 	
-	public Person getAssignee() {
+	public User getAssignee() {
 		return assignee;
 	}
 	
-	public void setAssignee(Person assignee) {
+	public void setAssignee(User assignee) {
 		this.assignee = assignee;
 	}
 	
