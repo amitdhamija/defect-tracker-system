@@ -119,6 +119,8 @@ public class DatabaseCommunicator implements IDatabaseCommunicator {
 					statement.executeUpdate(sql);
 					sql = "INSERT INTO user (first, last, email) VALUES ('Travis', 'Cribbet', 'tcribbet@gmail.com')";
 					statement.executeUpdate(sql);
+					sql = "INSERT INTO user (first, last, email) VALUES ('Kesha', 'Smith', 'KeshaS@comcast.net')";
+					statement.executeUpdate(sql);
 				}
 			}
 			
