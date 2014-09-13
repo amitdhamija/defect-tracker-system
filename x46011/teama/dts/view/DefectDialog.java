@@ -10,8 +10,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import x46011.teama.dts.controller.DTSCommManager;
 import x46011.teama.dts.model.Constants;
 import x46011.teama.dts.model.Defect;
+import x46011.teama.dts.model.DefectPriority;
+import x46011.teama.dts.model.DefectStatus;
 import x46011.teama.dts.model.Person;
 
 import java.util.ArrayList;
@@ -34,20 +37,24 @@ import java.beans.PropertyChangeListener;
  * @version 1.0
  * @revision 1.1	Amit Dhamija: added the components to the layout
  */
-class DefectDialog extends JDialog implements ActionListener, PropertyChangeListener, ItemListener {
+class DefectDialog extends JDialog implements PropertyChangeListener {
     
 	private static final long serialVersionUID = 1L;
 	
 	private Defect defect;
+	private DefectTrackerSystem dts;
+	private DTSCommManager manager;
+	private ArrayList<Person> users = new ArrayList<Person>();
+	private ArrayList<DefectPriority> priorities = new ArrayList<DefectPriority>();
+	private ArrayList<DefectStatus> statuses = new ArrayList<DefectStatus>();
+	private Hashtable<String, Person> usersByName = new Hashtable<String, Person>();
 	private JOptionPane optionPane;
     
-    private JTextField textFieldId = new JTextField(Constants.TEXTFIELD_COLUMNS);
-    private JTextField textFieldDate = new JTextField(Constants.TEXTFIELD_COLUMNS);
     private JTextField textFieldSummary = new JTextField(Constants.TEXTFIELD_COLUMNS);
-    private JComboBox comboBoxPriority = new JComboBox();
-    private JComboBox comboBoxStatus = new JComboBox();
-    private JComboBox comboBoxSubmitter = new JComboBox();
-    private JComboBox comboBoxAssignee = new JComboBox();
+    private JComboBox comboBoxPriority;
+    private JComboBox comboBoxStatus;
+    private JComboBox comboBoxSubmitter;
+    private JComboBox comboBoxAssignee;
     private JTextArea textAreaDescription = new JTextArea();
     
     private String btnSaveString = Constants.SAVE;
@@ -57,20 +64,31 @@ class DefectDialog extends JDialog implements ActionListener, PropertyChangeList
     public DefectDialog(Frame frame, Defect defect, int action) {
         super(frame, true);
         
-        this.defect = defect;
+        if(defect == null) {
+        	this.defect = new Defect();
+        	setTitle(Constants.ADD_DEFECT);
+        }
+        else {
+        	this.defect = defect;
+        	setTitle(Constants.MODIFY_ASSIGN_DEFECT);
+        }
         
-        // TODO: Remove test data; use getUsers() from manager
-		
-		if(action == Constants.ACTION_ADD_DEFECT) {
+        if(action == Constants.ACTION_ADD_DEFECT) {
 			setTitle(Constants.ADD_DEFECT);
 		}
 		else if(action == Constants.ACTION_MODIFY_ASSIGN_DEFECT) {
 			setTitle(Constants.MODIFY_ASSIGN_DEFECT);
 		}
 		
-        setPreferredSize(new Dimension(Constants.DEFECT_DIALOG_SIZE_WIDTH, Constants.DEFECT_DIALOG_SIZE_HEIGHT));
-        setResizable(false);
-		createDialogUI();
+        manager = DefectTrackerSystem.getManager();
+        users.clear();
+        users.addAll(manager.getUsers());
+        priorities.clear();
+        priorities.addAll(manager.getPriorities());
+        statuses.clear();
+        statuses.addAll(manager.getStatuses());
+        
+        createAndInitializeUI();
         
         // Handle window closing correctly.
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -81,22 +99,30 @@ class DefectDialog extends JDialog implements ActionListener, PropertyChangeList
             }
         });
         
-        comboBoxPriority.addItemListener(this);
-        comboBoxStatus.addItemListener(this);
-        comboBoxSubmitter.addItemListener(this);
-        comboBoxAssignee.addItemListener(this);
-        //textAreaDescription.addActionListener(this);
-        
-        optionPane.addPropertyChangeListener(this);
-        
         pack();
+        setPreferredSize(new Dimension(Constants.DEFECT_DIALOG_SIZE_WIDTH, Constants.DEFECT_DIALOG_SIZE_HEIGHT));
+        setResizable(false);
         setLocationRelativeTo(frame);
         setVisible(true);
     }
     
-    public void createDialogUI() {
-        JLabel labelId = new JLabel(Constants.LABEL_DEFECT_ID);
-        JLabel labelDate = new JLabel(Constants.LABEL_DEFECT_DATE);
+    public void createAndInitializeUI() {
+    	int size = users.size();
+		String[] names = new String[size];
+		for(int i = 0; i < size; i++) {
+			Person user = users.get(i);
+			names[i] = user.getName();
+			usersByName.put(user.getName(), user);
+		}
+		
+		comboBoxSubmitter = new JComboBox(names);
+		comboBoxAssignee = new JComboBox(names);
+		
+		comboBoxPriority = new JComboBox(priorities.toArray());
+		comboBoxStatus = new JComboBox(statuses.toArray());
+		
+        //JLabel labelId = new JLabel(Constants.LABEL_DEFECT_ID);
+        //JLabel labelDate = new JLabel(Constants.LABEL_DEFECT_DATE);
         JLabel labelSummary = new JLabel(Constants.LABEL_DEFECT_SUMMARY);
         JLabel labelPriority = new JLabel(Constants.LABEL_DEFECT_PRIORITY);
         JLabel labelStatus = new JLabel(Constants.LABEL_DEFECT_STATUS);
@@ -105,7 +131,6 @@ class DefectDialog extends JDialog implements ActionListener, PropertyChangeList
         JLabel labelDescription = new JLabel(Constants.LABEL_DEFECT_DESCRIPTION);
         JScrollPane scrollPaneDescription = new JScrollPane();
         
-        //comboBox, textField initialize, setText, size code goes here;
         scrollPaneDescription.setViewportView(textAreaDescription);
         textAreaDescription.setColumns(Constants.TEXTAREA_COLUMNS);
         textAreaDescription.setRows(Constants.TEXTAREA_ROWS);
@@ -126,8 +151,8 @@ class DefectDialog extends JDialog implements ActionListener, PropertyChangeList
         layout.setHorizontalGroup(
         		layout.createSequentialGroup()
         		.addGroup(layout.createParallelGroup()
-        				.addComponent(labelId)
-        				.addComponent(labelDate)
+        				//.addComponent(labelId)
+        				//.addComponent(labelDate)
         				.addComponent(labelSummary)
         				.addComponent(labelPriority)
         				.addComponent(labelStatus)
@@ -135,8 +160,8 @@ class DefectDialog extends JDialog implements ActionListener, PropertyChangeList
         				.addComponent(labelAssignee)
         				.addComponent(labelDescription))
         				.addGroup(layout.createParallelGroup()
-        						.addComponent(textFieldId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        						.addComponent(textFieldDate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        						//.addComponent(textFieldId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        						//.addComponent(textFieldDate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
         						.addComponent(textFieldSummary)
         						.addComponent(comboBoxPriority, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
         						.addComponent(comboBoxStatus, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -146,12 +171,12 @@ class DefectDialog extends JDialog implements ActionListener, PropertyChangeList
         layout.setVerticalGroup(
         		layout.createSequentialGroup()
         		.addGroup(layout.createParallelGroup()
-        				.addComponent(labelId)
-        				.addComponent(textFieldId))
-        				.addGroup(layout.createParallelGroup()
-        						.addComponent(labelDate)
-                				.addComponent(textFieldDate))
-                		.addGroup(layout.createParallelGroup()
+        				//.addComponent(labelId)
+        				//.addComponent(textFieldId))
+        				//.addGroup(layout.createParallelGroup()
+        						//.addComponent(labelDate)
+                				//.addComponent(textFieldDate))
+                		//.addGroup(layout.createParallelGroup()
                 				.addComponent(labelSummary)
         						.addComponent(textFieldSummary))
         				.addGroup(layout.createParallelGroup()
@@ -178,6 +203,10 @@ class DefectDialog extends JDialog implements ActionListener, PropertyChangeList
                                     options,
                                     options[1]);
         
+        
+        //textFieldSummary.addActionListener(this);
+        optionPane.addPropertyChangeListener(this);
+        
         // Make this dialog display it.
         setContentPane(optionPane);
     }
@@ -187,21 +216,10 @@ class DefectDialog extends JDialog implements ActionListener, PropertyChangeList
     	setVisible(false);
     	dispose();
     }
-    
-	@Override
-	public void itemStateChanged(ItemEvent e) {
-		String name = e.getItem().toString();
-		//email = emails.get(name);
-	}
-	
-	@Override
-    public void actionPerformed(ActionEvent e) {
-        optionPane.setValue(btnSaveString);
-    }
  
     @Override
     public void propertyChange(PropertyChangeEvent e) {
-        String prop = e.getPropertyName();
+    	String prop = e.getPropertyName();
  
         if (isVisible()
          && (e.getSource() == optionPane)
@@ -218,8 +236,14 @@ class DefectDialog extends JDialog implements ActionListener, PropertyChangeList
                     JOptionPane.UNINITIALIZED_VALUE);
  
             if (btnSaveString.equals(value)) {
-            	// TODO: send email
-            	//System.out.println("Email: " + email);
+            	defect.setSubmitter(users.get(comboBoxSubmitter.getSelectedIndex()));
+            	defect.setAssignee(users.get(comboBoxAssignee.getSelectedIndex()));
+            	defect.setPriority(priorities.get(comboBoxPriority.getSelectedIndex()));
+            	defect.setStatus(statuses.get(comboBoxStatus.getSelectedIndex()));
+            	defect.setSummary(textFieldSummary.getText());
+            	defect.setDescription(textAreaDescription.getText());
+            	manager.createDefect(defect);
+            	dts.getSingleInstance().updateTable();
             	clearAndHide();
             } else { // user closed dialog or clicked cancel
                 clearAndHide();
