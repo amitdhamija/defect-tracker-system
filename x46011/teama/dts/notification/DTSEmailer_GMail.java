@@ -1,6 +1,5 @@
 package x46011.teama.dts.notification;
 
-import java.security.Security;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Set;
@@ -33,7 +32,6 @@ public class DTSEmailer_GMail implements IDTSEmailer {
 	}
 	
 	public void sendMail(String formattedMessage, String addressee) {
-	        Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 	        final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
 	        
 	        String recipientEmail = addressee;
