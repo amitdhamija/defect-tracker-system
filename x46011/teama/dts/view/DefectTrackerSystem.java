@@ -20,10 +20,7 @@ import javax.swing.event.ListSelectionListener;
 import x46011.teama.dts.controller.DTSCommManager;
 import x46011.teama.dts.model.Constants;
 import x46011.teama.dts.model.Defect;
-import x46011.teama.dts.model.DefectPriority;
-import x46011.teama.dts.model.DefectStatus;
 import x46011.teama.dts.model.DefectTableModel;
-import x46011.teama.dts.model.Person;
 
 /**
  * The DefectTrackerSystem class runs the main thread and allows the user to navigate the application.
@@ -37,7 +34,7 @@ import x46011.teama.dts.model.Person;
  * 					Amit Dhamija: Added code to use Dimension object and get frame size from Constants class
  * @revision 1.3	Amit Dhamija: Made changes to the placement of code for UI
  * @revision 1.4	Amit Dhamija: Added instance of the manager class
- * @revision 1.5	Amit Dhamija: Added logic to enable Modify/Assign and Email Status buttons only when there is list of Defects available
+ * @revision 1.5	Amit Dhamija: Added logic to update the UI table when the data is added/updated
  */
 public class DefectTrackerSystem {
 
@@ -86,14 +83,6 @@ public class DefectTrackerSystem {
         return dts;
     }
 	
-	public void updateTable() {
-		defectList.clear();
-		defectList.addAll(manager.getDefects());
-        DefectTableModel defectTableModel = new DefectTableModel(defectList);
-        tableDefectList.setModel(defectTableModel);
-        //tableDefectList.changeSelection(0, 0, false, false);
-	}
-	
 	public void createAndShowUI() {
 		frame = new JFrame();
 		frame.setTitle(Constants.DTS_TITLE);
@@ -101,15 +90,6 @@ public class DefectTrackerSystem {
 		frame.setSize(new Dimension(Constants.DTS_FRAME_SIZE_WIDTH, Constants.DTS_FRAME_SIZE_HEIGHT));
 		
 		tableDefectList = new JTable();
-		
-        tableDefectList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent event) {
-                if (!event.getValueIsAdjusting() ) {
-                    onRowSelected(tableDefectList.getSelectedRow());
-                }
-            }
-        });
         
         JScrollPane scrollPaneDefectList = new JScrollPane();
         scrollPaneDefectList.setViewportView(tableDefectList);
@@ -135,7 +115,7 @@ public class DefectTrackerSystem {
         });
 
         JButton buttonModifyAssignDefect = new JButton();
-        buttonModifyAssignDefect.setEnabled(false);
+        //buttonModifyAssignDefect.setEnabled(false);
         buttonModifyAssignDefect.setText(Constants.MODIFY_ASSIGN_DEFECT);
         buttonModifyAssignDefect.addActionListener(new java.awt.event.ActionListener() {
         	@Override
@@ -145,7 +125,7 @@ public class DefectTrackerSystem {
         });
 
         JButton buttonEmailStatus = new JButton();
-        buttonEmailStatus.setEnabled(false);
+        //buttonEmailStatus.setEnabled(false);
         buttonEmailStatus.setText(Constants.EMAIL_STATUS);
         buttonEmailStatus.addActionListener(new java.awt.event.ActionListener() {
         	@Override
@@ -184,10 +164,35 @@ public class DefectTrackerSystem {
         frame.setVisible(true);
         
         // TODO: Worker thread?
-        // TODO: Move this in a post-data received method
+        setDefectListTableModel();
         
-        updateTable();
+        tableDefectList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting() ) {
+                    onRowSelected(tableDefectList.getSelectedRow());
+                }
+            }
+        });
         
+        tableDefectList.changeSelection(0, 0, false, false);
+	}
+	
+	public void updateDefectList(int id) {
+		setDefectListTableModel();
+		if(defectList.size() > 0) {
+			if (id == -1)
+				tableDefectList.changeSelection(defectList.size() - 1, 0, false, false);
+			else
+				tableDefectList.changeSelection(id - 1, 0, false, false);
+		}
+	}
+	
+	private void setDefectListTableModel() {
+		defectList.clear();
+		defectList.addAll(manager.getDefects());
+		DefectTableModel defectTableModel = new DefectTableModel(defectList);
+        tableDefectList.setModel(defectTableModel);
         tableDefectList.getColumnModel().getColumn(0).setPreferredWidth(50);
         tableDefectList.getColumnModel().getColumn(1).setPreferredWidth(75);
         tableDefectList.getColumnModel().getColumn(2).setPreferredWidth(100);
@@ -196,24 +201,19 @@ public class DefectTrackerSystem {
         tableDefectList.getColumnModel().getColumn(5).setPreferredWidth(50);
         tableDefectList.getColumnModel().getColumn(6).setPreferredWidth(250);
         tableDefectList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
-        if(defectList.size() > 0) {
-        	tableDefectList.changeSelection(0, 0, false, false);
-            buttonModifyAssignDefect.setEnabled(true);
-            buttonEmailStatus.setEnabled(true);
-        }
 	}
 	
 	private void onRowSelected(int row) {
-		//textAreaDescription.setText(defectList.get(row).getDescription());
+		if (row != -1)
+			textAreaDescription.setText(defectList.get(row).getDescription());
 	}
 	
 	private void onAddDefectButtonClicked() {
-		DefectDialog defectDialog = new DefectDialog(frame, null, Constants.ACTION_ADD_DEFECT);
+		DefectDialog defectDialog = new DefectDialog(frame, null);
 	}
 	
 	private void onModifyAssignButtonClicked(int row) {
-		DefectDialog defectDialog = new DefectDialog(frame, defectList.get(row), Constants.ACTION_MODIFY_ASSIGN_DEFECT);
+		DefectDialog defectDialog = new DefectDialog(frame, defectList.get(row));
 	}
 
 	private void onEmailStatusButtonClicked(int row) {

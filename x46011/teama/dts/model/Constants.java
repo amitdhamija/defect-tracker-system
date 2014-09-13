@@ -23,9 +23,6 @@ public final class Constants {
 	public static final int TEXTAREA_COLUMNS = 20;
 	public static final int TEXTAREA_ROWS = 5;
 	
-	public static final int ACTION_ADD_DEFECT = 1;
-	public static final int ACTION_MODIFY_ASSIGN_DEFECT = 2;
-	
 	public static final String COLON = ": ";
 	public static final String DTS_TITLE = "Defect Tracker System";
 	

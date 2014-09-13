@@ -1,10 +1,18 @@
 package x46011.teama.dts.view;
  
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -17,77 +25,40 @@ import x46011.teama.dts.model.DefectPriority;
 import x46011.teama.dts.model.DefectStatus;
 import x46011.teama.dts.model.Person;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 /**
  * The DefectDialog class shows the Dialog to modify and/or assign the Defect.
  * 
  * @author Amit Dhamija
  * @version 1.0
- * @revision 1.1	Amit Dhamija: added the components to the layout
+ * @revision 1.1	Amit Dhamija: Added the components to the layout
+ * @revision 1.2	Amit Dhamija: Made various changes to integrate data with UI
  */
 class DefectDialog extends JDialog implements PropertyChangeListener {
     
 	private static final long serialVersionUID = 1L;
 	
 	private Defect defect;
-	private DefectTrackerSystem dts;
 	private DTSCommManager manager;
 	private ArrayList<Person> users = new ArrayList<Person>();
 	private ArrayList<DefectPriority> priorities = new ArrayList<DefectPriority>();
 	private ArrayList<DefectStatus> statuses = new ArrayList<DefectStatus>();
-	private Hashtable<String, Person> usersByName = new Hashtable<String, Person>();
 	private JOptionPane optionPane;
     
-    private JTextField textFieldSummary = new JTextField(Constants.TEXTFIELD_COLUMNS);
-    private JComboBox comboBoxPriority;
-    private JComboBox comboBoxStatus;
     private JComboBox comboBoxSubmitter;
     private JComboBox comboBoxAssignee;
+    private JComboBox comboBoxPriority;
+    private JComboBox comboBoxStatus;
+    private JTextField textFieldSummary = new JTextField(Constants.TEXTFIELD_COLUMNS);
     private JTextArea textAreaDescription = new JTextArea();
     
     private String btnSaveString = Constants.SAVE;
     private String btnCancelString = Constants.CANCEL;
-    private String email = "";
     
-    public DefectDialog(Frame frame, Defect defect, int action) {
+    public DefectDialog(Frame frame, Defect defect) {
         super(frame, true);
         
-        if(defect == null) {
-        	this.defect = new Defect();
-        	setTitle(Constants.ADD_DEFECT);
-        }
-        else {
-        	this.defect = defect;
-        	setTitle(Constants.MODIFY_ASSIGN_DEFECT);
-        }
-        
-        if(action == Constants.ACTION_ADD_DEFECT) {
-			setTitle(Constants.ADD_DEFECT);
-		}
-		else if(action == Constants.ACTION_MODIFY_ASSIGN_DEFECT) {
-			setTitle(Constants.MODIFY_ASSIGN_DEFECT);
-		}
-		
-        manager = DefectTrackerSystem.getManager();
-        users.clear();
-        users.addAll(manager.getUsers());
-        priorities.clear();
-        priorities.addAll(manager.getPriorities());
-        statuses.clear();
-        statuses.addAll(manager.getStatuses());
-        
+        this.defect = defect;
+        fetchUIData();
         createAndInitializeUI();
         
         // Handle window closing correctly.
@@ -106,28 +77,26 @@ class DefectDialog extends JDialog implements PropertyChangeListener {
         setVisible(true);
     }
     
-    public void createAndInitializeUI() {
-    	int size = users.size();
-		String[] names = new String[size];
-		for(int i = 0; i < size; i++) {
-			Person user = users.get(i);
-			names[i] = user.getName();
-			usersByName.put(user.getName(), user);
-		}
-		
-		comboBoxSubmitter = new JComboBox(names);
-		comboBoxAssignee = new JComboBox(names);
-		
-		comboBoxPriority = new JComboBox(priorities.toArray());
-		comboBoxStatus = new JComboBox(statuses.toArray());
-		
-        //JLabel labelId = new JLabel(Constants.LABEL_DEFECT_ID);
-        //JLabel labelDate = new JLabel(Constants.LABEL_DEFECT_DATE);
-        JLabel labelSummary = new JLabel(Constants.LABEL_DEFECT_SUMMARY);
-        JLabel labelPriority = new JLabel(Constants.LABEL_DEFECT_PRIORITY);
-        JLabel labelStatus = new JLabel(Constants.LABEL_DEFECT_STATUS);
+    private void fetchUIData() {
+    	manager = DefectTrackerSystem.getManager();
+        users.clear();
+        users.addAll(manager.getUsers());
+        priorities.clear();
+        priorities.addAll(manager.getPriorities());
+        statuses.clear();
+        statuses.addAll(manager.getStatuses());
+    }
+    
+    private void createAndInitializeUI() {
+    	JLabel labelId = new JLabel(Constants.LABEL_DEFECT_ID);
+    	JLabel labelIdValue = new JLabel();
+        JLabel labelDate = new JLabel(Constants.LABEL_DEFECT_DATE);
+        JLabel labelDateValue = new JLabel();
         JLabel labelSubmitter = new JLabel(Constants.LABEL_DEFECT_SUBMITTER);
         JLabel labelAssignee = new JLabel(Constants.LABEL_DEFECT_ASSIGNEE);
+        JLabel labelPriority = new JLabel(Constants.LABEL_DEFECT_PRIORITY);
+        JLabel labelStatus = new JLabel(Constants.LABEL_DEFECT_STATUS);
+        JLabel labelSummary = new JLabel(Constants.LABEL_DEFECT_SUMMARY);
         JLabel labelDescription = new JLabel(Constants.LABEL_DEFECT_DESCRIPTION);
         JScrollPane scrollPaneDescription = new JScrollPane();
         
@@ -135,7 +104,19 @@ class DefectDialog extends JDialog implements PropertyChangeListener {
         textAreaDescription.setColumns(Constants.TEXTAREA_COLUMNS);
         textAreaDescription.setRows(Constants.TEXTAREA_ROWS);
         
-        JPanel panel = new JPanel();
+    	int size = users.size();
+		String[] names = new String[size];
+		for(int i = 0; i < size; i++) {
+			Person user = users.get(i);
+			names[i] = user.getName();
+		}
+		
+		comboBoxSubmitter = new JComboBox(names);
+		comboBoxAssignee = new JComboBox(names);
+		comboBoxPriority = new JComboBox(priorities.toArray());
+		comboBoxStatus = new JComboBox(statuses.toArray());
+        
+		JPanel panel = new JPanel();
         GroupLayout layout = new GroupLayout(panel);
         
         panel.setLayout(layout);
@@ -148,52 +129,103 @@ class DefectDialog extends JDialog implements PropertyChangeListener {
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
         
-        layout.setHorizontalGroup(
-        		layout.createSequentialGroup()
-        		.addGroup(layout.createParallelGroup()
-        				//.addComponent(labelId)
-        				//.addComponent(labelDate)
-        				.addComponent(labelSummary)
-        				.addComponent(labelPriority)
-        				.addComponent(labelStatus)
+        if(defect == null) {
+        	setTitle(Constants.ADD_DEFECT);
+        	layout.setHorizontalGroup(
+            		layout.createSequentialGroup()
+            		.addGroup(layout.createParallelGroup()
         				.addComponent(labelSubmitter)
         				.addComponent(labelAssignee)
+        				.addComponent(labelPriority)
+        				.addComponent(labelStatus)
+        				.addComponent(labelSummary)
         				.addComponent(labelDescription))
         				.addGroup(layout.createParallelGroup()
-        						//.addComponent(textFieldId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        						//.addComponent(textFieldDate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        						.addComponent(textFieldSummary)
-        						.addComponent(comboBoxPriority, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        						.addComponent(comboBoxStatus, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        						.addComponent(comboBoxSubmitter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        						.addComponent(comboBoxAssignee, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        						.addComponent(scrollPaneDescription)));
-        layout.setVerticalGroup(
-        		layout.createSequentialGroup()
-        		.addGroup(layout.createParallelGroup()
-        				//.addComponent(labelId)
-        				//.addComponent(textFieldId))
-        				//.addGroup(layout.createParallelGroup()
-        						//.addComponent(labelDate)
-                				//.addComponent(textFieldDate))
-                		//.addGroup(layout.createParallelGroup()
-                				.addComponent(labelSummary)
-        						.addComponent(textFieldSummary))
-        				.addGroup(layout.createParallelGroup()
-        						.addComponent(labelPriority)
-        						.addComponent(comboBoxPriority))
-        				.addGroup(layout.createParallelGroup()
-        						.addComponent(labelStatus)
-        						.addComponent(comboBoxStatus))
-        				.addGroup(layout.createParallelGroup()
-                				.addComponent(labelSubmitter)
-                				.addComponent(comboBoxSubmitter))
+    						.addComponent(comboBoxSubmitter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    						.addComponent(comboBoxAssignee, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    						.addComponent(comboBoxPriority, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    						.addComponent(comboBoxStatus, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    						.addComponent(textFieldSummary)
+    						.addComponent(scrollPaneDescription)));
+            layout.setVerticalGroup(
+            		layout.createSequentialGroup()
+            		.addGroup(layout.createParallelGroup()
+        				.addComponent(labelSubmitter)
+        				.addComponent(comboBoxSubmitter))
                 		.addGroup(layout.createParallelGroup()
-                				.addComponent(labelAssignee)
-                				.addComponent(comboBoxAssignee))
+            				.addComponent(labelAssignee)
+            				.addComponent(comboBoxAssignee))
+        				.addGroup(layout.createParallelGroup()
+    						.addComponent(labelPriority)
+    						.addComponent(comboBoxPriority))
+        				.addGroup(layout.createParallelGroup()
+    						.addComponent(labelStatus)
+    						.addComponent(comboBoxStatus))
+        				.addGroup(layout.createParallelGroup()
+    						.addComponent(labelSummary)
+            				.addComponent(textFieldSummary))
                 		.addGroup(layout.createParallelGroup()
-                				.addComponent(labelDescription)
-                				.addComponent(scrollPaneDescription)));
+            				.addComponent(labelDescription)
+            				.addComponent(scrollPaneDescription)));
+        }
+        else {
+        	setTitle(Constants.MODIFY_ASSIGN_DEFECT);
+        	labelIdValue.setText(String.valueOf(defect.getId()));
+        	labelDateValue.setText(defect.getDate().toString());
+        	comboBoxSubmitter.setSelectedItem(defect.getSubmitter().getName());
+        	comboBoxAssignee.setSelectedItem(defect.getAssignee().getName());
+        	comboBoxPriority.setSelectedItem(defect.getPriority());
+        	comboBoxStatus.setSelectedItem(defect.getStatus());
+        	textFieldSummary.setText(defect.getSummary());
+        	textAreaDescription.setText(defect.getDescription());
+        	
+        	layout.setHorizontalGroup(
+            		layout.createSequentialGroup()
+            		.addGroup(layout.createParallelGroup()
+        				.addComponent(labelId)
+        				.addComponent(labelDate)
+        				.addComponent(labelSubmitter)
+        				.addComponent(labelAssignee)
+        				.addComponent(labelPriority)
+        				.addComponent(labelStatus)
+        				.addComponent(labelSummary)
+        				.addComponent(labelDescription))
+        				.addGroup(layout.createParallelGroup()
+    						.addComponent(labelIdValue, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    						.addComponent(labelDateValue, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    						.addComponent(comboBoxSubmitter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    						.addComponent(comboBoxAssignee, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    						.addComponent(comboBoxPriority, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    						.addComponent(comboBoxStatus, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+    						.addComponent(textFieldSummary)
+    						.addComponent(scrollPaneDescription)));
+            layout.setVerticalGroup(
+            		layout.createSequentialGroup()
+            		.addGroup(layout.createParallelGroup()
+        				.addComponent(labelId)
+        				.addComponent(labelIdValue))
+        				.addGroup(layout.createParallelGroup()
+        					.addComponent(labelDate)
+                			.addComponent(labelDateValue))
+                		.addGroup(layout.createParallelGroup()
+        					.addComponent(labelSubmitter)
+        					.addComponent(comboBoxSubmitter))
+        				.addGroup(layout.createParallelGroup()
+        					.addComponent(labelAssignee)
+        					.addComponent(comboBoxAssignee))
+                		.addGroup(layout.createParallelGroup()
+                			.addComponent(labelPriority)
+                			.addComponent(comboBoxPriority))
+                		.addGroup(layout.createParallelGroup()
+                			.addComponent(labelStatus)
+                			.addComponent(comboBoxStatus))
+                		.addGroup(layout.createParallelGroup()
+                			.addComponent(labelSummary)
+                			.addComponent(textFieldSummary))
+                		.addGroup(layout.createParallelGroup()
+                			.addComponent(labelDescription)
+                			.addComponent(scrollPaneDescription)));
+        }
         
         // Create the JOptionPane.
         optionPane = new JOptionPane(array,
@@ -203,8 +235,6 @@ class DefectDialog extends JDialog implements PropertyChangeListener {
                                     options,
                                     options[1]);
         
-        
-        //textFieldSummary.addActionListener(this);
         optionPane.addPropertyChangeListener(this);
         
         // Make this dialog display it.
@@ -212,7 +242,7 @@ class DefectDialog extends JDialog implements PropertyChangeListener {
     }
     
     /** This method clears the dialog and clearAndHides it. */
-    public void clearAndHide() {
+    private void clearAndHide() {
     	setVisible(false);
     	dispose();
     }
@@ -236,14 +266,28 @@ class DefectDialog extends JDialog implements PropertyChangeListener {
                     JOptionPane.UNINITIALIZED_VALUE);
  
             if (btnSaveString.equals(value)) {
-            	defect.setSubmitter(users.get(comboBoxSubmitter.getSelectedIndex()));
-            	defect.setAssignee(users.get(comboBoxAssignee.getSelectedIndex()));
-            	defect.setPriority(priorities.get(comboBoxPriority.getSelectedIndex()));
-            	defect.setStatus(statuses.get(comboBoxStatus.getSelectedIndex()));
-            	defect.setSummary(textFieldSummary.getText());
-            	defect.setDescription(textAreaDescription.getText());
-            	manager.createDefect(defect);
-            	dts.getSingleInstance().updateTable();
+            	if (defect == null) {
+            		defect = new Defect();
+            		defect.setSubmitter(users.get(comboBoxSubmitter.getSelectedIndex()));
+            		defect.setAssignee(users.get(comboBoxAssignee.getSelectedIndex()));
+            		defect.setPriority(priorities.get(comboBoxPriority.getSelectedIndex()));
+            		defect.setStatus(statuses.get(comboBoxStatus.getSelectedIndex()));
+            		defect.setSummary(textFieldSummary.getText());
+            		defect.setDescription(textAreaDescription.getText());
+                	manager.createDefect(defect);
+                	DefectTrackerSystem.getSingleInstance().updateDefectList(-1);
+            	}
+            	else {
+            		defect.setSubmitter(users.get(comboBoxSubmitter.getSelectedIndex()));
+            		defect.setAssignee(users.get(comboBoxAssignee.getSelectedIndex()));
+            		defect.setPriority(priorities.get(comboBoxPriority.getSelectedIndex()));
+            		defect.setStatus(statuses.get(comboBoxStatus.getSelectedIndex()));
+            		defect.setSummary(textFieldSummary.getText());
+            		defect.setDescription(textAreaDescription.getText());
+            		manager.saveDefect(defect);
+            		DefectTrackerSystem.getSingleInstance().updateDefectList(defect.getId());
+            	}
+            	
             	clearAndHide();
             } else { // user closed dialog or clicked cancel
                 clearAndHide();

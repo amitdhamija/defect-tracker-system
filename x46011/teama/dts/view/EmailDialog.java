@@ -1,10 +1,18 @@
 package x46011.teama.dts.view;
  
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import x46011.teama.dts.controller.DTSCommManager;
@@ -12,36 +20,25 @@ import x46011.teama.dts.model.Constants;
 import x46011.teama.dts.model.Defect;
 import x46011.teama.dts.model.Person;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 /**
  * The EmailDialog class shows the Dialog to email Defect status to the recipient.
  * 
  * @author Amit Dhamija
+ * @author Kevin Alexander
  * @version 1.0
  * @revision 1.1	Amit Dhamija: Made changes to the placement of code for UI
+ * @revision 1.2	Amit Dhamija: Structured code similar to Defect class
+ * 					Amit Dhamija: Made changes to use single instance of the manager and use users array to get the email based on selectedIndex
  */
-class EmailDialog extends JDialog implements ActionListener, PropertyChangeListener, ItemListener {
+class EmailDialog extends JDialog implements PropertyChangeListener {
     
 	private static final long serialVersionUID = 1L;
 	
 	private DTSCommManager manager;
 	private Defect defect;
 	private ArrayList<Person> recipients = new ArrayList<Person>();
-	private Hashtable<String, String> emails = new Hashtable<String, String>();
 	private JOptionPane optionPane;
-    private JComboBox recipientComboBox;
+    private JComboBox comboBoxRecipient;
     
     private String btnSendString = Constants.SEND_EMAIL;
     private String btnCancelString = Constants.CANCEL;
@@ -51,16 +48,8 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
         super(frame, true);
         
         this.defect = defect;
-        
-        // TODO: Remove test data; use getUsers() from manager
-        manager = new DTSCommManager();
-        recipients.clear();
-        recipients.addAll(manager.getUsers());
-
-		setTitle(Constants.EMAIL_STATUS);
-        setPreferredSize(new Dimension(Constants.EMAIL_DIALOG_SIZE_WIDTH, Constants.EMAIL_DIALOG_SIZE_HEIGHT));
-        setResizable(false);
-		createDialogUI();
+        fetchUIData();
+        createAndInitializeUI();
         
         // Handle window closing correctly.
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -71,20 +60,28 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
             }
         });
         
-        recipientComboBox.addItemListener(this);
-        // Register an event handler that reacts to option pane state changes.
-        optionPane.addPropertyChangeListener(this);
-        
         pack();
+        setPreferredSize(new Dimension(Constants.EMAIL_DIALOG_SIZE_WIDTH, Constants.EMAIL_DIALOG_SIZE_HEIGHT));
+        setResizable(false);
         setLocationRelativeTo(frame);
         setVisible(true);
     }
     
-    public void createDialogUI() {
+    private void fetchUIData() {
+    	manager = DefectTrackerSystem.getManager();
+        recipients.clear();
+        recipients.addAll(manager.getUsers());
+    }
+    
+    private void createAndInitializeUI() {
+    	setTitle(Constants.EMAIL_STATUS);
     	JLabel labelDefectId = new JLabel(Constants.LABEL_DEFECT_ID);
         JLabel labelDefectSummary = new JLabel(Constants.LABEL_DEFECT_SUMMARY);
         JLabel labelDefectStatus = new JLabel(Constants.LABEL_DEFECT_STATUS);
         JLabel labelRecipient = new JLabel(Constants.LABEL_RECIPIENT);
+        JLabel labelDefectIdValue = new JLabel(String.valueOf(defect.getId()));
+        JLabel labelDefectSummaryValue = new JLabel(defect.getSummary());
+        JLabel labelDefectStatusValue = new JLabel(defect.getStatus().name());
         
     	int size = recipients.size();
 		String[] names = new String[size];
@@ -92,18 +89,11 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
 		for(int i = 0; i < size; i++) {
 			Person recipient = recipients.get(i);
 			names[i] = recipient.getName();
-			emails.put(recipient.getName(), recipient.getEmail());
 		}
 		
+		comboBoxRecipient = new JComboBox(names);
     	String assigneeName = defect.getAssignee().getName();
-		email = emails.get(assigneeName);
-		recipientComboBox = new JComboBox(names);
-		recipientComboBox.setSelectedItem(assigneeName);
-		
-        // TODO: assume defect is not null; do check? and not set value here?
-        JLabel labelDefectIdValue = new JLabel(String.valueOf(defect.getId()));
-        JLabel labelDefectSummaryValue = new JLabel(defect.getSummary());
-        JLabel labelDefectStatusValue = new JLabel(defect.getStatus().name());
+    	comboBoxRecipient.setSelectedItem(assigneeName);
         
         JPanel panel = new JPanel();
         GroupLayout layout = new GroupLayout(panel);
@@ -129,7 +119,7 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
         						.addComponent(labelDefectIdValue)
         						.addComponent(labelDefectSummaryValue)
         						.addComponent(labelDefectStatusValue)
-        						.addComponent(recipientComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
+        						.addComponent(comboBoxRecipient, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
         layout.setVerticalGroup(
         		layout.createSequentialGroup()
         		.addGroup(layout.createParallelGroup()
@@ -143,7 +133,7 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
         						.addComponent(labelDefectStatusValue))
         						.addGroup(layout.createParallelGroup()
                 						.addComponent(labelRecipient)
-                						.addComponent(recipientComboBox)));
+                						.addComponent(comboBoxRecipient)));
         
         // Create the JOptionPane.
         optionPane = new JOptionPane(array,
@@ -153,27 +143,19 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
                                     options,
                                     options[1]);
         
+        // Register an event handler that reacts to option pane state changes.
+        optionPane.addPropertyChangeListener(this);
+        
         // Make this dialog display it.
         setContentPane(optionPane);
     }
     
     /** This method clears the dialog and clearAndHides it. */
-    public void clearAndHide() {
+    private void clearAndHide() {
     	setVisible(false);
     	dispose();
     }
     
-	@Override
-	public void itemStateChanged(ItemEvent e) {
-		String name = e.getItem().toString();
-		email = emails.get(name);
-	}
-	
-	@Override
-    public void actionPerformed(ActionEvent e) {
-        optionPane.setValue(btnSendString);
-    }
- 
     @Override
     public void propertyChange(PropertyChangeEvent e) {
         String prop = e.getPropertyName();
@@ -193,6 +175,7 @@ class EmailDialog extends JDialog implements ActionListener, PropertyChangeListe
                     JOptionPane.UNINITIALIZED_VALUE);
  
             if (btnSendString.equals(value)) {
+            	email = recipients.get(comboBoxRecipient.getSelectedIndex()).getEmail();
             	sendEmail();
             	clearAndHide();
             } else { // user closed dialog or clicked cancel
