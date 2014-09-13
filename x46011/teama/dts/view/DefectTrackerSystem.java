@@ -179,7 +179,7 @@ public class DefectTrackerSystem {
         
         // TODO: Worker thread?
         // TODO: Move this in a post-data received method
-        //defectList.addAll(manager.getDefects());
+        defectList.addAll(manager.getDefects());
         DefectTableModel defectTableModel = new DefectTableModel(defectList);
         tableDefectList.setModel(defectTableModel);
         tableDefectList.getColumnModel().getColumn(0).setPreferredWidth(50);

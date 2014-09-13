@@ -122,6 +122,22 @@ public class DatabaseCommunicator implements IDatabaseCommunicator {
 				}
 			}
 			
+			statement.execute("SELECT * FROM defect");
+			resultSet = statement.getResultSet();
+			if (resultSet != null) {
+				//if table is empty
+				if(!resultSet.next()) {
+					String sql = "INSERT INTO defect (submitter_id, assignee_id, priority_id, status_id, summary, description) VALUES (1,2,1,3,'Bad stuff happened', 'CPU pegs 100% and remains until forced to terminate')";
+					statement.executeUpdate(sql);
+					sql = "INSERT INTO defect (submitter_id, assignee_id, priority_id, status_id, summary, description) VALUES (2,4,2,1,'Terrible stuff happened', 'CPU exploded in a shower of sparks and silicon')";
+					statement.executeUpdate(sql);
+					sql = "INSERT INTO defect (submitter_id, assignee_id, priority_id, status_id, summary, description) VALUES (3,1,3,1,'Display issue', 'Red pixel #8302 should be blue')";
+					statement.executeUpdate(sql);
+					sql = "INSERT INTO defect (submitter_id, assignee_id, priority_id, status_id, summary, description) VALUES (4,3,1,2,'Intermittent unintended data export', 'Occasionally, while app is running, a slice of swiss cheese is ejected from the DVD drive.')";
+					statement.executeUpdate(sql);
+				}
+			}
+			
 			connection.close();
 		} catch (SQLException ex) {
 			System.out.println("Error Code: " + ex.getErrorCode() + " \nState: " + ex.getSQLState() + " \nMessage: " + ex.getMessage());
